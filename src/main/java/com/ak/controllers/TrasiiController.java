@@ -42,8 +42,8 @@ public class TrasiiController {
             if(tmpKeysSelected != null && tmpKeysSelected.size()>0){
                 BigDecimal tmpNumProcess = CountersUtils.randomIdGenerator();
                 if(tmpNumProcess != null && tmpNumProcess.compareTo(new BigDecimal("0")) > 0){
-                    // trassiService.procesarRegistros(tmpKeysSelected,tmpNumProcess);
-                    trassiService.insertControl();
+                    trassiService.procesarRegistros(tmpKeysSelected,tmpNumProcess);
+                    // trassiService.insertControl();
                 }
             }
         }
