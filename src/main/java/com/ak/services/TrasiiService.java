@@ -58,7 +58,7 @@ public class TrasiiService {
     }
 
 
-    @Transactional
+    // @Transactional
     public void procesarRegistros(List<TrasiiKey> aKeys, BigDecimal aNumPro){
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
@@ -73,8 +73,8 @@ public class TrasiiService {
             keyBean.setEmpresa(inKey.getEmpresa());
             keyBean.setCtlpro(aNumPro);
             ctlBean.setId(keyBean);
-            ctlBean.setCtlfcr(new java.sql.Date(new Date().getTime()));
-            ctlBean.setCtlhcr(new java.sql.Time(new Date().getTime()));
+            ctlBean.setCtlfcr();
+            ctlBean.setCtlhcr();
             ctlBean.setCtlrut("");
             ctlBean.setCtluse("WEB");
             ctlsiiService.save(ctlBean);

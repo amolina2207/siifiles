@@ -21,7 +21,7 @@ public class SsiApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		service.insertControl();
+		//service.insertControl();
 	}
 
 }
