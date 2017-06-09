@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by amolina on 22/05/17.
@@ -21,68 +22,50 @@ public class TrasiiService {
 
     @Autowired
     private CtlsiiService ctlsiiService;
-
+    
+    @Autowired
+    private EnvioSiiService envioSiiService;
+    
     @Autowired
     private TrasiiRepository repository;
 
     public List<TrasiiBean> findAll(){
-        List tmpResult = repository.findAll();
+    	List<TrasiiBean> tmpResult = repository.findAll();
         return tmpResult;
     }
 
-
-    @Transactional
-    public void insertControl(){
-        CtlsiiKey keyBean = new CtlsiiKey();
-        CtlsiiBean ctlBean = new CtlsiiBean();
-        keyBean.setCompaak("05");
-        keyBean.setEmpresa("01");
-        keyBean.setCtlpro(new BigDecimal(99));
-        ctlBean.setId(keyBean);
-        ctlBean.setCtlrut("/home/amolina");
-        ctlBean.setCtluse("AITOR");
-        ctlBean.setCtlfcr();
-        ctlBean.setCtlhcr();
-        ctlsiiService.save(ctlBean);
-        /*keyBean = new CtlsiiKey();
-        ctlBean = new CtlsiiBean();
-        keyBean.setCompaak("05");
-        keyBean.setEmpresa("01");
-        keyBean.setCtlpro(new BigDecimal(100));
-        ctlBean.setId(keyBean);
-        ctlBean.setCtlrut("rutaFile");
-        ctlBean.setCtluse("JAVIER");
-        ctlBean.setCtlfcr();
-        ctlBean.setCtlhcr();
-        ctlsiiService.save(ctlBean);*/
-    }
-
-
-    // @Transactional
     public void procesarRegistros(List<TrasiiKey> aKeys, BigDecimal aNumPro){
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
         CtlsiiKey keyBean;
+        // Marco todos los registros seleccionados con un numero de proceso
         for(TrasiiKey inKey : aKeys) {
             inBean = repository.findOne(inKey);
             inBean.setEmipro(aNumPro);
             repository.save(inBean);
-            ctlBean = new CtlsiiBean();
-            keyBean = new CtlsiiKey();
-            keyBean.setCompaak(inKey.getCompaak());
-            keyBean.setEmpresa(inKey.getEmpresa());
-            keyBean.setCtlpro(aNumPro);
-            ctlBean.setId(keyBean);
-            ctlBean.setCtlfcr();
-            ctlBean.setCtlhcr();
-            ctlBean.setCtlrut("");
-            ctlBean.setCtluse("WEB");
-            ctlsiiService.save(ctlBean);
         }
+        // Inserto un registro en la tabla de control con el numero de proceso
+        ctlBean = new CtlsiiBean();
+        keyBean = new CtlsiiKey();
+        keyBean.setCompaak(aKeys.get(0).getCompaak());
+        keyBean.setEmpresa(aKeys.get(0).getEmpresa());
+        keyBean.setCtlpro(aNumPro);
+        ctlBean.setId(keyBean);
+        ctlBean.setCtlfcr();
+        ctlBean.setCtlhcr();
+        ctlBean.setCtlrut("");
+        ctlBean.setCtluse("WEB");
+        ctlsiiService.save(ctlBean);
+        // Bloqueo 5 segundos para que el proceso RPG cree el XML
+        try {
+			TimeUnit.SECONDS.sleep(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        // envioSiiService.procesarFicheroYGuardarResultado("SII_"+aNumPro+".XML",aKeys);
+        envioSiiService.procesarFicheroYGuardarResultado("Z:\\SII\\SII_2017053112.XML",aKeys);
     }
-
-
-
+    
     public TrasiiBean findById(String compaak,String empresa,BigDecimal ejercio,String periodo,String eminif,String facnum,String facfec,String facter) {
         TrasiiKey tmpKey = new TrasiiKey();
         tmpKey.setCompaak(compaak);
@@ -99,11 +82,6 @@ public class TrasiiService {
     public TrasiiBean findOne(TrasiiKey tmpKey){
         return repository.findOne(tmpKey);
     }
-
-    /*
-    public int setResdesForTrasii(String compaak,String empresa,BigDecimal ejercio,String periodo,String eminif,String facnum,String facfec,String facter,String numeroProceso){
-        return repository.setResdesForTrasii(compaak,empresa,ejercio,periodo,eminif,facnum,facfec,facter,numeroProceso);
-    }*/
 
     public TrasiiBean save(TrasiiBean data){
         return repository.save(data);
