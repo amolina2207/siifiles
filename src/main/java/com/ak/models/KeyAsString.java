@@ -1,11 +1,10 @@
 package com.ak.models;
 
-import javax.sql.rowset.serial.SerialArray;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.TreeMap;
 
 /**
  * Created by amolina on 29/05/17.
@@ -22,8 +21,8 @@ public class KeyAsString implements Serializable {
         this.registros = registros;
     }
 
-    public List<TrasiiKey> convertToKeys(){
-        List<TrasiiKey> tmpKeys = new ArrayList<>();
+    public TreeMap<String,TrasiiKey> convertToKeys(){
+    	TreeMap<String,TrasiiKey> tmpKeys = new TreeMap<String,TrasiiKey>();
         String[] chunks;
         TrasiiKey curr;
         for(String completeKey : getRegistros()){
@@ -37,7 +36,7 @@ public class KeyAsString implements Serializable {
             curr.setFacnum(chunks[5]);
             curr.setFacfec(chunks[6]);
             curr.setFacter(chunks[7]);
-            tmpKeys.add(curr);
+            tmpKeys.put(chunks[5], curr);
         }
         return tmpKeys;
     }

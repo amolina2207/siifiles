@@ -23,3 +23,30 @@
 .pagination > li > a{
     color: #449d44;
 }
+
+a { 
+  color: @link-color; 
+  text-decoration: none; 
+
+  &:hover, 
+  &:focus { 
+    color: @link-hover-color; 
+    text-decoration: underline; 
+  } 
+
+  &:focus { 
+    .tab-focus(); 
+  } 
+}
+
+.modal-dialog{
+	margin: 80px auto;
+	width: 1400px;
+}
+
+.modal-content {
+	padding-top: 50px;
+  	height: 900px;
+}
+
+

@@ -79,7 +79,9 @@
 <div ng-controller="TrasiiCRUDCtrl" ng-init="getAllTrasii()">
 
     <p style="color: green">{{message}}</p>
-    <p style="color: red">{{errorMessage}}</p>
+<!--     <p style="color: red">{{errorMessage}}</p> -->
+    
+    <div class="alert alert-danger" role="alert" ng-show="errorMessage">{{errorMessage}}</div>
 
     <div class="col-md-10 col-md-offset-1">
 
@@ -94,77 +96,90 @@
                     </div>
                 </div>
             </div>
+            
             <div class="panel-body">
-                <table class="table table-striped table-bordered table-list">
+                <table class="table table-striped table-bordered table-list" style="font-size: 12px">
                     <thead>
+                    <tr style="height:20px;">
+	                    Empresa: <input type="text" ng-model="trasiisfilter.id.empresa" style="width: 30px" maxlength="2"/>
+			            Ejercicio:
+			            <select ng-model="trasiisfilter.id.ejercio">
+    						<option ng-repeat="(key, value) in years" value="{{key}}">{{value}}</option>
+						</select>
+			            Periodo:
+			            <select ng-model="trasiisfilter.id.periodo">
+    						<option ng-repeat="(key, value) in months" value="{{key}}">{{value}}</option>
+						</select>
+			            NIF: <input type="text" ng-model="trasiisfilter.id.eminif" style="width: 100px" maxlength="25"/>
+			            Factura: <input type="text" ng-model="trasiisfilter.id.facnum" style="width: 100px" maxlength="10"/>
+			            Tipo R/E:
+			            <select name="tipo" ng-model="trasiisfilter.id.facter">
+			            	<option value="E">E</option>
+			            	<option value="R">R</option>
+			            </select>
+                    </tr>
                     <tr>
                         <th><em class="fa fa-cog"></em></th>
-                        <th class="hidden-xs">Company</th>
+<!--                         <th class="hidden-xs">Company</th> -->
                         <th>Empresa</th>
                         <th>Ejercicio</th>
                         <th>Periodo</th>
                         <th>NIF</th>
                         <th>Num Factura</th>
-                        <th>Fecha Factura</th>
+<!--                         <th>Fecha Factura</th> -->
                         <th>Facter</th>
-                        <th>Emp Cif</th>
-                        <th>Repcif</th>
+<!--                         <th>Emp Cif</th> -->
+<!--                         <th>Repcif</th> -->
                         <th>Tipo com</th>
                         <th>Tipo factura</th>
-                        <th>Facrti</th>
-                        <!--<th>Facrnu</th>-->
-                        <!--<th>Facrfe</th>-->
+<!--                         <th>Facrti</th> -->
+						<th>Estado</th>
+						<th>Error</th>
+						<th>Detalle</th>
                     </tr>
                     </thead>
                     <tbody>
-
-                    <tr ng-repeat="tra in itemsToShow" ng-click="setSelected(tra,tra.id.facnum)" ng-class="isRowSelected[tra.id.facnum] ? 'selectedRow':''">
+					<tr
+					ng-repeat="tra in itemsToShow | filter:trasiisfilter"
+					ng-click="setSelected(tra,tra.id.facnum)"
+					ng-class="isRowSelected[tra.id.facnum] ? 'selectedRow':''">
                         <td align="center">
                             <!--<a class="btn btn-default" ng-click="getTrasii(tra)"><em class="fa fa-pencil"></em></a> -->
-
                             <!--<input type="checkbox" ng-checked="item.isRowSelected" ng-click="toggleSelection({{ tra.id.compaak }})" value="{{ tra.id.compaak }}||{{ tra.id.empresa }}||{{ tra.id.ejercio }}||{{ tra.id.periodo }}||{{ tra.id.eminif }}||{{ tra.id.facnum }}||{{ tra.id.facfec }}||{{ tra.id.facter }}||{{ tra.empcif }}" />-->
-                            <!-- <a class="btn btn-default" ng-click="open()"><em class="fa fa-pencil"></em></a>
-                             <a class="btn btn-danger"><em class="fa fa-trash"></em></a>-->
+<!--                            <a class="btn btn-default" ng-click="open()"><em class="fa fa-pencil"></em></a> -->
+<!--                            <a ng-click="open()"><em class="fa fa-pencil"></em></a> -->
+                           
+                           <a class="btn btn-default" style="width: 4px; height: 7px; text-align: center" ng-click="open(tra)"> <i class="fa fa-pencil fa-1x" style="float: left; font-size: 10px"></i></a>
+                           
+<!--                              <a class="btn btn-danger"><em class="fa fa-trash"></em></a> -->
                         </td>
-
-                            <td class="hidden-xs">{{ tra.id.compaak }}</td>
+<!--                             <td class="hidden-xs">{{ tra.id.compaak }}</td> -->
                             <td>{{ tra.id.empresa }}</td>
                             <td>{{ tra.id.ejercio }}</td>
                             <td>{{ tra.id.periodo }}</td>
                             <td>{{ tra.id.eminif }}</td>
                             <td>{{ tra.id.facnum }}</td>
-                            <td>{{ tra.id.facfec }}</td>
+<!--                             <td>{{ tra.id.facfec }}</td> -->
                             <td>{{ tra.id.facter }}</td>
-                            <td>{{ tra.empcif }}</td>
-                            <td>{{ tra.repcif }}</td>
+<!--                             <td>{{ tra.empcif }}</td> -->
+<!--                             <td>{{ tra.repcif }}</td> -->
                             <td>{{ tra.tipocom }}</td>
                             <td>{{ tra.factip }}</td>
-                            <td>{{ tra.facrti }}</td>
-                            <!--<td>{{ tra.facrnu }}</td>-->
-                            <!--<td>{{ tra.facrfe }}</td>-->
+<!--                             <td>{{ tra.facrti }}</td> -->
+							<td>{{ tra.resfac }}</td>
+							<td>{{ tra.reserr }}</td>
+							<td>{{ tra.resdes }}</td>
                     </tr>
                     </tbody>
                 </table>
-
             </div>
             <div class="panel-footer">
                 <div class="row">
                     <div class="col col-xs-4">Pagina {{currentPage}} de {{totalPages}} &nbsp;&nbsp;&nbsp;&nbsp;
-                        <button type="button" class="btn btn-success" ng-click="procesarRegistros()">Procesar</button>
+                        <button type="button" class="btn btn-success" ng-click="procesarRegistros()" ng-disabled="btnProcesar">Procesar</button>
                     </div>
                     <div class="col col-xs-8">
                         <ul uib-pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()"  items-per-page="itemsPerPage"></ul>
-                        <!--<ul class="pagination hidden-xs pull-right">
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                        </ul>
-                        <ul class="pagination visible-xs pull-right">
-                            <li><a href="#">«</a></li>
-                            <li><a href="#">»</a></li>
-                        </ul>-->
                     </div>
                 </div>
             </div>
@@ -172,7 +187,7 @@
     </div>
 </div>
     </div>
-</div> <!-- /.row -->
-</div> <!-- /.container -->
+</div>
+</div>
 </body>
 </html>

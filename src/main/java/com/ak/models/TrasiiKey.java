@@ -26,7 +26,74 @@ public class TrasiiKey implements Serializable{
     @Column(name = "FACTER")
     private String facter;
 
-    public String getCompaak() {
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((compaak == null) ? 0 : compaak.hashCode());
+		result = prime * result + ((ejercio == null) ? 0 : ejercio.hashCode());
+		result = prime * result + ((eminif == null) ? 0 : eminif.hashCode());
+		result = prime * result + ((empresa == null) ? 0 : empresa.hashCode());
+		result = prime * result + ((facfec == null) ? 0 : facfec.hashCode());
+		result = prime * result + ((facnum == null) ? 0 : facnum.hashCode());
+		result = prime * result + ((facter == null) ? 0 : facter.hashCode());
+		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TrasiiKey other = (TrasiiKey) obj;
+		if (compaak == null) {
+			if (other.compaak != null)
+				return false;
+		} else if (!compaak.equals(other.compaak))
+			return false;
+		if (ejercio == null) {
+			if (other.ejercio != null)
+				return false;
+		} else if (!ejercio.equals(other.ejercio))
+			return false;
+		if (eminif == null) {
+			if (other.eminif != null)
+				return false;
+		} else if (!eminif.equals(other.eminif))
+			return false;
+		if (empresa == null) {
+			if (other.empresa != null)
+				return false;
+		} else if (!empresa.equals(other.empresa))
+			return false;
+		if (facfec == null) {
+			if (other.facfec != null)
+				return false;
+		} else if (!facfec.equals(other.facfec))
+			return false;
+		if (facnum == null) {
+			if (other.facnum != null)
+				return false;
+		} else if (!facnum.equals(other.facnum))
+			return false;
+		if (facter == null) {
+			if (other.facter != null)
+				return false;
+		} else if (!facter.equals(other.facter))
+			return false;
+		if (periodo == null) {
+			if (other.periodo != null)
+				return false;
+		} else if (!periodo.equals(other.periodo))
+			return false;
+		return true;
+	}
+
+	public String getCompaak() {
         return compaak;
     }
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -22,67 +22,24 @@ import javax.xml.soap.SOAPMessage;
 
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ak.models.ResultFactura;
+import com.ak.models.TrasiiBean;
 import com.ak.models.TrasiiKey;
+import com.ak.models.WSProps;
 import com.ak.repositories.TrasiiRepository;
 
 @Service
 public class EnvioSiiService {
-
+	
 	@Autowired
 	private TrasiiRepository trasiiRepository;
 	
+	@Autowired
+	private WSProps wsprops;
+	
 	private StringBuffer sb;
-	
-	@Value("pathCert")
-	private String pathCert;
-	
-	@Value("typeCert")
-	private String typeCert;
-	
-	@Value("passCert")
-	private String passCert;
-	
-	@Value("endpoint")
-	private String endpoint;
-	
-	/*
-	@ConfigurationProperties(prefix = "wsdata")
-	class WSData {
-		
-		String pathCert;
-	    String typeCert;
-	    String passCert;
-	    String endpoint;
-	    
-		public String getPathCert() {
-			return pathCert;
-		}
-		public void setPathCert(String pathCert) {
-			this.pathCert = pathCert;
-		}
-		public String getTypeCert() {
-			return typeCert;
-		}
-		public void setTypeCert(String typeCert) {
-			this.typeCert = typeCert;
-		}
-		public String getPassCert() {
-			return passCert;
-		}
-		public void setPassCert(String passCert) {
-			this.passCert = passCert;
-		}
-		public String getEndpoint() {
-			return endpoint;
-		}
-		public void setEndpoint(String endpoint) {
-			this.endpoint = endpoint;
-		}
-	}*/
-	
 	
 	private static final Logger LOGGER = Logger.getLogger(EnvioSiiService.class.getName());
 	
@@ -102,51 +59,96 @@ public class EnvioSiiService {
 	        newBuffer();
 	        try(Stream<String> stream = Files.lines(Paths.get(aPath))) {
 	            stream.forEach((line)->addStringToBuffer(line));
+	        }catch(Exception e){
+	        	LOGGER.log(Level.SEVERE, "ERROR : Loading file");
+	        	e.printStackTrace();
 	        }
 	        LOGGER.log(Level.INFO, "File Loaded");
     	}
     }
     
-    private synchronized void callSave(String aXml, List<TrasiiKey> aKeys) throws SOAPException, IOException, JAXBException {
+    private synchronized TreeMap<String,ResultFactura> callAndReceive(String aXml, TreeMap<String, TrasiiKey> aKeys, String aModo) throws SOAPException, IOException, JAXBException {
         getXmlFromFile(aXml);
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage(new MimeHeaders(), new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
-        SOAPElement tmpPart,tmpElement;
-        String tmpResult = null;
-        System.setProperty("javax.net.ssl.keyStore", pathCert);
-        System.setProperty("javax.net.ssl.keyStoreType", typeCert);
-        System.setProperty("javax.net.ssl.keyStorePassword", passCert);
+        SOAPElement tmpPart = null,tmpElement, tmpElementRL, tmpIdFactura;
+        System.setProperty("javax.net.ssl.keyStore", wsprops.getPathCert());
+        System.setProperty("javax.net.ssl.keyStoreType", wsprops.getTypeCert());
+        System.setProperty("javax.net.ssl.keyStorePassword", wsprops.getPassCert());
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-        SOAPMessage soapResponse = soapConnection.call(message, endpoint);
-        SOAPBody tmpBody = soapResponse.getSOAPBody();
-    
-        java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
-        while (tmpParts.hasNext()) {
-            tmpPart = (SOAPElement)tmpParts.next();
-            java.util.Iterator<?> items = tmpPart.getChildElements();
-            while( items.hasNext() ){
-                tmpElement = (SOAPElement)items.next();
-                tmpResult = tmpElement.getValue();
-                if (tmpResult!=null && tmpResult.length()>0 && !tmpResult.equalsIgnoreCase("Incorrecto")){
-//                    try {
-//                        InputStream tmpStreamXML = new ByteArrayInputStream(tmpResult.getBytes(Charset.forName("UTF-8")));
-//                        JAXBContext jaxbContext = JAXBContext.newInstance(RespuestaLRFEmitidasType.class);
-//                        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-//                        RespuestaLRFEmitidasType respuestaFacturas = (RespuestaLRFEmitidasType) jaxbUnmarshaller.unmarshal(tmpStreamXML);
-//                        System.out.println("");
-//                    } catch (JAXBException e) {
-//                        e.printStackTrace();
-//                    }
-                }
-            }
+        String tmpEndpoint = null;
+        if(aModo.equals("R")){
+        	tmpEndpoint = wsprops.getEndpointRecibidas();
+        }else{
+        	tmpEndpoint = wsprops.getEndpointEmitidas();
         }
+        SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
+        TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
+        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
+        SOAPBody tmpBody = soapResponse.getSOAPBody();
+        java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
+        String tmpEstado = "";
+        ResultFactura resultFactura;
+		while (tmpParts.hasNext()) {
+			try {
+				tmpPart = (SOAPElement) tmpParts.next();
+			} catch (java.lang.ClassCastException e) {
+				e.printStackTrace();
+				break;
+			}
+			java.util.Iterator<?> items = tmpPart.getChildElements();
+			while (items.hasNext()) {
+				tmpElement = (SOAPElement) items.next();
+				if (tmpElement != null) {
+					if (tmpElement.getLocalName().equals("EstadoEnvio")) {
+						tmpEstado = tmpElement.getValue();
+					}else if (tmpElement.getLocalName().equals("RespuestaLinea")) {
+						java.util.Iterator<?> itemsRL = tmpElement.getChildElements();
+						resultFactura = new ResultFactura();
+						while (itemsRL.hasNext()) {
+							tmpElementRL = (SOAPElement) itemsRL.next();
+							if (tmpElementRL.getLocalName().equals("IDFactura")) {
+								java.util.Iterator<?> itemsIDFactura = tmpElementRL.getChildElements();
+								while (itemsIDFactura.hasNext()) {
+									tmpIdFactura = (SOAPElement) itemsIDFactura.next();
+									if (tmpIdFactura.getLocalName().equals("NumSerieFacturaEmisor")) {
+										resultFactura.setIdFactura(tmpIdFactura.getValue());
+									}
+								}
+							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
+								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
+							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
+								resultFactura.setErrorCode(tmpElementRL.getValue());
+							} else if (tmpElementRL.getLocalName().equals("DescripcionErrorRegistro")) {
+								resultFactura.setErrorDesc(tmpElementRL.getValue());
+							}
+						}
+						results.put(resultFactura.getIdFactura(), resultFactura);
+					}
+				}
+			}
+        }
+		return results;
     }
         
-    public void procesarFicheroYGuardarResultado(String aPath, List<TrasiiKey> aKeys){
+    public void procesarFicheroYGuardarResultado(String aPath, TreeMap<String,TrasiiKey> aKeys, String aModo){
 		try {
-			callSave(aPath, aKeys);
-		} catch (SOAPException | IOException | JAXBException e) {
+			TreeMap<String,ResultFactura> aResults = callAndReceive(aPath, aKeys, aModo);
+			if(aResults == null){ LOGGER.log(Level.SEVERE, "No response from AEAT !!!"); throw new Exception(); }
+			if(aResults.size() != aKeys.size()){ LOGGER.log(Level.SEVERE, "No se han recibidos respuestas de todas las facturas enviadas !!!"); throw new Exception(); }
+			TrasiiBean aBean = null;
+			ResultFactura aResultF = null;
+			for(TrasiiKey aKey : aKeys.values()){
+				aBean = trasiiRepository.findOne(aKey);	
+				aResultF = aResults.get(aKey.getFacnum().trim());
+				aBean.setReserr(aResultF.getErrorCode());
+				aBean.setResdes(aResultF.getErrorDesc());
+				// TODO :: Hablar con Manel para que haga este campo un poco mas grande
+				aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
+				trasiiRepository.save(aBean);
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

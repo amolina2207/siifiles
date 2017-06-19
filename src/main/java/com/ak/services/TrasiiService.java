@@ -1,18 +1,21 @@
 package com.ak.services;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.ak.models.CtlsiiBean;
 import com.ak.models.CtlsiiKey;
 import com.ak.models.TrasiiBean;
 import com.ak.models.TrasiiKey;
 import com.ak.repositories.TrasiiRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by amolina on 22/05/17.
@@ -20,6 +23,13 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TrasiiService {
 
+	private static final int SEGUNDOS_POR_FACTURA = 3;
+	
+	private static final Logger LOGGER = Logger.getLogger(EnvioSiiService.class.getName());
+	
+	@Value("${siiprops.pathfiles}")
+	private String pathfiles;
+	
     @Autowired
     private CtlsiiService ctlsiiService;
     
@@ -28,27 +38,33 @@ public class TrasiiService {
     
     @Autowired
     private TrasiiRepository repository;
-
+    
     public List<TrasiiBean> findAll(){
     	List<TrasiiBean> tmpResult = repository.findAll();
         return tmpResult;
     }
 
-    public void procesarRegistros(List<TrasiiKey> aKeys, BigDecimal aNumPro){
+    public void procesarRegistros(TreeMap<String,TrasiiKey> aKeys, BigDecimal aNumPro){
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
         CtlsiiKey keyBean;
+        String tmpCompany = null, tmpEmpresa = null, tmpModo = null;
         // Marco todos los registros seleccionados con un numero de proceso
-        for(TrasiiKey inKey : aKeys) {
+        for(TrasiiKey inKey : aKeys.values()) {
             inBean = repository.findOne(inKey);
             inBean.setEmipro(aNumPro);
             repository.save(inBean);
+            if(tmpCompany == null){
+            	tmpCompany = inKey.getCompaak();
+            	tmpEmpresa = inKey.getEmpresa();
+            	tmpModo = inKey.getFacfec();
+            }
         }
         // Inserto un registro en la tabla de control con el numero de proceso
         ctlBean = new CtlsiiBean();
         keyBean = new CtlsiiKey();
-        keyBean.setCompaak(aKeys.get(0).getCompaak());
-        keyBean.setEmpresa(aKeys.get(0).getEmpresa());
+        keyBean.setCompaak(tmpCompany);
+        keyBean.setEmpresa(tmpEmpresa);
         keyBean.setCtlpro(aNumPro);
         ctlBean.setId(keyBean);
         ctlBean.setCtlfcr();
@@ -56,14 +72,14 @@ public class TrasiiService {
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
         ctlsiiService.save(ctlBean);
-        // Bloqueo 5 segundos para que el proceso RPG cree el XML
         try {
-			TimeUnit.SECONDS.sleep(5);
+            // Bloqueo 5 segundos para que el proceso RPG cree el XML
+        	LOGGER.log(Level.INFO, "Waiting " + (int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
+			TimeUnit.SECONDS.sleep((int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-        // envioSiiService.procesarFicheroYGuardarResultado("SII_"+aNumPro+".XML",aKeys);
-        envioSiiService.procesarFicheroYGuardarResultado("Z:\\SII\\SII_2017053112.XML",aKeys);
+        envioSiiService.procesarFicheroYGuardarResultado(getPathfiles()+"SII_"+aNumPro+".xml",aKeys,tmpModo);
     }
     
     public TrasiiBean findById(String compaak,String empresa,BigDecimal ejercio,String periodo,String eminif,String facnum,String facfec,String facter) {
@@ -86,6 +102,14 @@ public class TrasiiService {
     public TrasiiBean save(TrasiiBean data){
         return repository.save(data);
     }
+
+	public String getPathfiles() {
+		return pathfiles;
+	}
+
+	public void setPathfiles(String pathfiles) {
+		this.pathfiles = pathfiles;
+	}
 
 
 }

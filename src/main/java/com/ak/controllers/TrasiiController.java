@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -38,7 +39,7 @@ public class TrasiiController {
     @RequestMapping(value = "/trasii/procesar", method = RequestMethod.POST, produces = {"application/json"})
     public List<TrasiiBean> procesarRegistros(@RequestBody KeyAsString registros) {
         if(registros != null) {
-            List<TrasiiKey> tmpKeysSelected = registros.convertToKeys();
+            TreeMap<String,TrasiiKey> tmpKeysSelected = registros.convertToKeys();
             if(tmpKeysSelected != null && tmpKeysSelected.size()>0){
                 BigDecimal tmpNumProcess = CountersUtils.randomIdGenerator();
                 if(tmpNumProcess != null && tmpNumProcess.compareTo(new BigDecimal("0")) > 0){
@@ -79,8 +80,8 @@ public class TrasiiController {
             @PathVariable String facnum,
             @PathVariable String facfec,
             @PathVariable String facter,
-            @RequestBody TrasiiBean data){
-
+            @RequestBody TrasiiBean updatedEntity){
+    	
         TrasiiKey tmpKey = new TrasiiKey();
         tmpKey.setCompaak(compaak);
         tmpKey.setEmpresa(empresa);
@@ -90,9 +91,9 @@ public class TrasiiController {
         tmpKey.setFacnum(facnum);
         tmpKey.setFacfec(facfec);
         tmpKey.setFacter(facter);
-        data.setId(tmpKey);
+        updatedEntity.setId(tmpKey);
 
-        TrasiiBean tmpResult = trassiService.save(data);
+        TrasiiBean tmpResult = trassiService.save(updatedEntity);
         if(tmpResult != null){
             return tmpResult;
         }

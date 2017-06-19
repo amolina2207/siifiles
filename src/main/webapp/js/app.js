@@ -8,24 +8,12 @@ app.service('TrasiiCRUDService', [ '$http', function($http) {
             url : '/trasii/'+trasii.id.compaak+'/'+trasii.id.empresa+'/'+trasii.id.ejercio+'/'+trasii.id.periodo+'/'+trasii.id.eminif+'/'+trasii.id.facnum+'/'+trasii.id.facfec+'/'+trasii.id.facter,
         });
     }
-
-    this.addTrasii = function addTrasii(trasii){
+    
+    this.updateTrasii = function updateTrasii(updatedEntity){
         return $http({
             method : 'POST',
-            url : '/trasii',
-            data : {
-                trasii
-            }
-        });
-    }
-
-    this.updateTrasii = function updateTrasii(trasii2){
-        return $http({
-            method : 'POST',
-            url : '/trasii/'+trasii2.compaak+'/'+trasii2.empresa+'/'+trasii2.ejercio+'/'+trasii2.periodo+'/'+trasii2.eminif+'/'+trasii2.facnum+'/'+trasii2.facfec+'/'+trasii2.facter,
-            data : {
-                trasii2
-            }
+            url : '/trasii/'+updatedEntity.id.compaak+'/'+updatedEntity.id.empresa+'/'+updatedEntity.id.ejercio+'/'+updatedEntity.id.periodo+'/'+updatedEntity.id.eminif+'/'+updatedEntity.id.facnum+'/'+updatedEntity.id.facfec+'/'+updatedEntity.id.facter,
+            data : updatedEntity
         });
     }
 
@@ -38,64 +26,105 @@ app.service('TrasiiCRUDService', [ '$http', function($http) {
             }
         });
     }
-
-
-    this.deleteTrasii = function deleteTrasii(trasii2) {
-        return $http({
-            method : 'DELETE',
-            url : '/trasii/'+trasii2.compaak+'/'+trasii2.empresa+'/'+trasii2.ejercio+'/'+trasii2.periodo+'/'+trasii2.eminif+'/'+trasii2.facnum+'/'+trasii2.facfec+'/'+trasii2.facter,
-        })
-    }
-
+    
     this.getAllTrasii = function getAllTrasii() {
         return $http({
             method : 'GET',
             url : '/trasii'
         });
     }
+    
+
+//    this.deleteTrasii = function deleteTrasii(trasii2) {
+//        return $http({
+//            method : 'DELETE',
+//            url : '/trasii/'+trasii2.compaak+'/'+trasii2.empresa+'/'+trasii2.ejercio+'/'+trasii2.periodo+'/'+trasii2.eminif+'/'+trasii2.facnum+'/'+trasii2.facfec+'/'+trasii2.facter,
+//        })
+//    }
+    
+//  this.addTrasii = function addTrasii(trasii){
+//  return $http({
+//      method : 'POST',
+//      url : '/trasii',
+//      data : {
+//          trasii3
+//      }
+//  });
+//}
+
+    
 
 }
 ]);
 
-app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$log',
+app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$log', '$filter',
     function ($scope, TrasiiCRUDService, $uibModal, $log) {
 
+		$scope.btnProcesar = "";
+		$scope.years = {
+			"2016":"2016",
+			"2017":"2017",
+			"2018":"2018",
+			"2019":"2019",
+			"2020":"2020"
+		};
+		$scope.months = {
+			"01":"Enero",
+			"02":"Febrero",
+			"03":"Marzo",
+			"04":"Abril",
+			"05":"Mayo",
+			"06":"Junio",
+			"07":"Julio",
+			"08":"Agosto",
+			"09":"Septiembre",
+			"10":"Octubre",
+			"11":"Noviembre",
+			"12":"Diciembre"
+		};
         var setOfKeys = new StringSet();
         $scope.totalItems = 0;
         $scope.currentPage = 1;
         $scope.itemsPerPage = 50;
         $scope.itemsToShow;
         $scope.rowIndex = -1;
-
+        $scope.isRowSelected = [];
+        
         $scope.setPage = function (pageNo) {
             $scope.currentPage = pageNo;
         };
 
         $scope.pageChanged = function() {
-            var offset = ($scope.currentPage - 1) * $scope.itemsPerPage; //itemsPage;// + 1;
+            var offset = ($scope.currentPage - 1) * $scope.itemsPerPage;
             var to = offset + $scope.itemsPerPage;
             $scope.itemsToShow = $scope.trasii2.slice(offset,to);
             $log.log('Showing items -> From: ' + offset + ' To: ' + to);
-
         };
-
-        $scope.isRowSelected = [];
-
+        
         $scope.setSelected = function(tra,facnum) {
-
-            $scope.isRowSelected[facnum] = ( $scope.isRowSelected[facnum] === undefined || $scope.isRowSelected[facnum] === false ) ? true : false;
-            var keyRow = tra.id.compaak.concat("||").concat(tra.id.empresa).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo).concat("||").concat(tra.id.eminif).concat("||").concat(tra.id.facnum).concat("||").concat(tra.id.facfec).concat("||").concat(tra.id.facter);
-
-            if(setOfKeys.contains(keyRow)){
-                setOfKeys.remove(keyRow);
-            }else{
-                setOfKeys.add(keyRow);
-            }
-            console.log(setOfKeys.values());
+        	if($scope.modo === undefined || $scope.modo == "" || $scope.modo == tra.id.facter){
+        		$scope.errorMessage = '';
+        		$scope.modo = tra.id.facter;
+        		$scope.isRowSelected[facnum] = ( $scope.isRowSelected[facnum] === undefined || $scope.isRowSelected[facnum] === false ) ? true : false;
+                var keyRow = tra.id.compaak.concat("||").concat(tra.id.empresa).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo).concat("||").concat(tra.id.eminif).concat("||").concat(tra.id.facnum).concat("||").concat(tra.id.facfec).concat("||").concat(tra.id.facter);
+                if(setOfKeys.contains(keyRow)){
+                    setOfKeys.remove(keyRow);
+                    if(setOfKeys.values().length == 0){
+                    	$scope.modo = ""; // Reseteamos el control de modo
+                    }
+                }else{
+                    setOfKeys.add(keyRow);
+                }
+                console.log(setOfKeys.values());
+                
+        	}else{ // Esta seleccionando registros de facturas emitidas y recibidas a la misma vez.
+        		$scope.errorMessage = 'No se pueden seleccionar registros de facturas emitidas y recibidas a la misma vez.';
+        	}
         };
 
         $scope.procesarRegistros = function(){
             if(setOfKeys.values().length > 0){
+            	$scope.btnProcesar = "false";
                 TrasiiCRUDService.procesarRegistros(setOfKeys.values())
                     .then(function success(response) {
                             $scope.trasii2 = response.data
@@ -106,39 +135,41 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                             $scope.errorMessage = '';
                             $scope.isRowSelected = []
                             setOfKeys.clear();
+                            
+                            $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
+                            $scope.modo = ""; // Reseteamos el control de modo
+                           
                     },
                     function error(response) {
                         $scope.message = '';
                         $scope.errorMessage = 'Error procesando registros Trasii!';
+                        $scope.modo = ""; // Reseteamos el control de modo
+                        $scope.isRowSelected = []; // Deseleccionamos las rows
                     });
+                	$scope.btnProcesar = "";
             }else {
                 $scope.message = '';
                 $scope.errorMessage = 'No hay ningun registro seleccionado!';
                 console.info('No hay ningun registro seleccionado!');
             }
         }
-
-
+        
         function StringSet() {
             var setObj = {}, val = {};
-
+            
             this.clear = function(){
                 setObj = {};
                 val = {};
             }
-
             this.add = function(str) {
                 setObj[str] = val;
             };
-
             this.contains = function(str) {
                 return setObj[str] === val;
             };
-
             this.remove = function(str) {
                 delete setObj[str];
             };
-
             this.values = function() {
                 var values = [];
                 for (var i in setObj) {
@@ -150,35 +181,56 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
             };
         }
 
-        $scope.dataForModal = {
-            name: 'NameToEdit',
-            value: 'ValueToEdit'
-        }
-        $scope.open = function() {
-            $uibModal.open({
-                component: "myModal",
-                resolve: {
-                    modalData: function() {
-                        return $scope.dataForModal;
-                    }
-                }
-            }).result.then(function(result) {
-                console.info("I was closed, so do what I need to do myContent's controller now.  Result was->");
-                console.info(result);
-            }, function(reason) {
-                console.info("I was dimissed, so do what I need to do myContent's controller now.  Reason was->" + reason);
+//        $scope.dataForModal = {
+//            name: 'NameToEdit',
+//            value: 'ValueToEdit'
+//        }
+        
+        $scope.open = function(tra){
+        	$scope.trasiimodal = tra;
+        	
+        	$scope.theModal = $uibModal.open({
+            	scope: $scope,
+                templateUrl : '../partial-views/editing-form.html',
+//                resolve: {
+//                    modalData: function() {
+//                        return $scope.dataForModal;
+//                    }
+//                }
             });
+            
+            $scope.ok = function () {
+            	var newData = $scope.trasiimodal;
+                $scope.updateTrasii(newData);
+                $scope.theModal.close();
+            };
+
+            $scope.cancel = function () {
+            	console.log('Dismissed');
+            	$scope.theModal.dismiss();
+            };
+
+            
+            
+//            modalInstance.result.then(function(result) {
+//                console.info("I was closed, so do what I need to do myContent's controller now.  Result was->");
+//                console.info(result);
+//            }, function () {
+//                $log.info('Modal dismissed at: ' + new Date());
+//            });
         };
+        
+      
 
         $scope.getAllTrasii = function () {
             TrasiiCRUDService.getAllTrasii()
                 .then(function success(response) {
-                        $scope.trasii2 = response.data//._embedded.trasii;
+                        $scope.trasii2 = response.data;
                         $scope.totalPages = Math.ceil($scope.trasii2.length / $scope.itemsPerPage);
                         $scope.totalItems = $scope.trasii2.length
                         $scope.itemsToShow = $scope.trasii2.slice(0,$scope.itemsPerPage);
                         $scope.message='';
-                        $scope.errorMessage = '';
+                        $scope.errorMessage = '';            
                     },
                     function error (response) {
                         $scope.message='';
@@ -206,7 +258,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
 
         $scope.updateTrasii = function (selectedRow) {
             TrasiiCRUDService.updateTrasii(selectedRow)
-
                 .then(function success(response) {
                         $scope.message = 'Trasii data updated!';
                         $scope.errorMessage = '';
@@ -235,8 +286,8 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                 $scope.errorMessage = 'Please enter required data!';
                 $scope.message = '';
             }
-        };*/
-
+        };
+         */
         /*
         $scope.deleteTrasii = function (selectedRow) {
             TrasiiCRUDService.deleteTrasii(selectedRow)
@@ -251,28 +302,3 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                     });
         };*/
     }]);
-
-app.component('myModal', {
-    templateUrl : '../partial-views/editing-form.html',
-    bindings: {
-        modalInstance: "<",
-        resolve: "<"
-    },
-    controller: [function() {
-        var $ctrl = this;
-
-        $ctrl.$init = function() {
-            $ctrl.modalData = $ctrl.resolve.modalData;
-        }
-
-        $ctrl.handleClose = function() {
-            console.info("in handle close");
-            $ctrl.modalInstance.close($ctrl.modalData);
-        };
-
-        $ctrl.handleDismiss = function() {
-            console.info("in handle dismiss");
-            $ctrl.modalInstance.dismiss("cancel");
-        };
-    }]
-});
