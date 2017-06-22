@@ -4,12 +4,16 @@ import com.ak.models.*;
 import com.ak.services.CtlsiiService;
 import com.ak.services.TrasiiService;
 import com.ak.utils.CountersUtils;
+
+import ch.qos.logback.classic.net.SyslogAppender;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -38,16 +42,38 @@ public class TrasiiController {
 
     @RequestMapping(value = "/trasii/procesar", method = RequestMethod.POST, produces = {"application/json"})
     public List<TrasiiBean> procesarRegistros(@RequestBody KeyAsString registros) {
-        if(registros != null) {
-            TreeMap<String,TrasiiKey> tmpKeysSelected = registros.convertToKeys();
-            if(tmpKeysSelected != null && tmpKeysSelected.size()>0){
-                BigDecimal tmpNumProcess = CountersUtils.randomIdGenerator();
-                if(tmpNumProcess != null && tmpNumProcess.compareTo(new BigDecimal("0")) > 0){
-                    trassiService.procesarRegistros(tmpKeysSelected,tmpNumProcess);
-                    // trassiService.insertControl();
-                }
-            }
-        }
+    	
+    	// Pretty Java 8 way
+    	Optional<KeyAsString> optionalKeys = Optional.ofNullable(registros);
+    	if(optionalKeys.isPresent()){
+    		KeyAsString keys = optionalKeys.get();
+    		Optional<TreeMap<String,TrasiiKey>> optKeyBeans = Optional.ofNullable(keys.convertToKeys());
+    		if(optKeyBeans.isPresent() && optKeyBeans.get().size()>0){
+    			Optional<BigDecimal> tmpNumP = Optional.ofNullable(CountersUtils.randomIdGenerator());
+    			if(tmpNumP.isPresent()){
+    				trassiService.procesarRegistros(optKeyBeans.get(), tmpNumP.get());
+    			}
+    		}
+    	}
+    	
+    	// Even prettier way and safe!
+    	/*Optional<KeyAsString> optionalKeys = Optional.ofNullable(registros);
+    	Optional<BigDecimal> numeroProceso = optionalKeys
+    			.flatMap(keysAsString -> Optional.ofNullable(keysAsString.convertToKeys()))
+    			.flatMap(realKeys -> Optional.ofNullable(CountersUtils.randomIdGenerator()))
+    			.ifPresent(System.out::println);*/
+    	
+    	// Typical way
+//        if(registros != null) {
+//            TreeMap<String,TrasiiKey> tmpKeysSelected = registros.convertToKeys();
+//            if(tmpKeysSelected != null && tmpKeysSelected.size()>0){
+//                BigDecimal tmpNumProcess = CountersUtils.randomIdGenerator();
+//                if(tmpNumProcess != null && tmpNumProcess.compareTo(new BigDecimal("0")) > 0){
+//                    trassiService.procesarRegistros(tmpKeysSelected,tmpNumProcess);
+//                    // trassiService.insertControl();
+//                }
+//            }
+//        }
         List<TrasiiBean> tmpResult = trassiService.findAll();
         return tmpResult;
     }

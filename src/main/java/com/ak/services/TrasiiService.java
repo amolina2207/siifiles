@@ -74,8 +74,8 @@ public class TrasiiService {
         ctlsiiService.save(ctlBean);
         try {
             // Bloqueo 5 segundos para que el proceso RPG cree el XML
-        	LOGGER.log(Level.INFO, "Waiting " + (int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
-			TimeUnit.SECONDS.sleep((int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA));
+        	LOGGER.log(Level.INFO, "Waiting " + (int)Math.round(aKeys.size()*SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
+			TimeUnit.SECONDS.sleep(((int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA) + SEGUNDOS_POR_FACTURA));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

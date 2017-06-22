@@ -10,15 +10,14 @@
 
     <title>SSI</title>
 
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
-
+    <script src="js/angular.js"></script>
+    <script src="js/angular-animate.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/ui-bootstrap-tpls-2.5.0.js"></script>
     <script src="js/app.js"></script>
-
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="css/table.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
@@ -132,7 +131,7 @@
 <!--                         <th>Repcif</th> -->
                         <th>Tipo com</th>
                         <th>Tipo factura</th>
-<!--                         <th>Facrti</th> -->
+                        <th>CSV</th>
 						<th>Estado</th>
 						<th>Error</th>
 						<th>Detalle</th>
@@ -149,7 +148,7 @@
 <!--                            <a class="btn btn-default" ng-click="open()"><em class="fa fa-pencil"></em></a> -->
 <!--                            <a ng-click="open()"><em class="fa fa-pencil"></em></a> -->
                            
-                           <a class="btn btn-default" style="width: 4px; height: 7px; text-align: center" ng-click="open(tra)"> <i class="fa fa-pencil fa-1x" style="float: left; font-size: 10px"></i></a>
+                           <a class="btn btn-default" ng-click="open(tra)"> <i class="fa fa-pencil fa-3x" style="float: left; font-size: 10px"></i></a>
                            
 <!--                              <a class="btn btn-danger"><em class="fa fa-trash"></em></a> -->
                         </td>
@@ -165,7 +164,7 @@
 <!--                             <td>{{ tra.repcif }}</td> -->
                             <td>{{ tra.tipocom }}</td>
                             <td>{{ tra.factip }}</td>
-<!--                             <td>{{ tra.facrti }}</td> -->
+							<td>{{ tra.rescsv }}</td>
 							<td>{{ tra.resfac }}</td>
 							<td>{{ tra.reserr }}</td>
 							<td>{{ tra.resdes }}</td>

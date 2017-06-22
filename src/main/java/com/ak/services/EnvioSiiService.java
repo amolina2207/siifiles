@@ -85,7 +85,7 @@ public class EnvioSiiService {
         }
         SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
         TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
-        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
+//        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
         SOAPBody tmpBody = soapResponse.getSOAPBody();
         java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
         String tmpEstado = "";
@@ -116,6 +116,9 @@ public class EnvioSiiService {
 										resultFactura.setIdFactura(tmpIdFactura.getValue());
 									}
 								}
+							// TODO: Comprobar si el campo CSV llega a este nivel
+							} else if (tmpElementRL.getLocalName().equals("CSV")) {
+								resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
@@ -142,6 +145,7 @@ public class EnvioSiiService {
 			for(TrasiiKey aKey : aKeys.values()){
 				aBean = trasiiRepository.findOne(aKey);	
 				aResultF = aResults.get(aKey.getFacnum().trim());
+				aBean.setRescsv(aResultF.getCsv());
 				aBean.setReserr(aResultF.getErrorCode());
 				aBean.setResdes(aResultF.getErrorDesc());
 				// TODO :: Hablar con Manel para que haga este campo un poco mas grande
