@@ -84,6 +84,7 @@ public class EnvioSiiService {
         	tmpEndpoint = wsprops.getEndpointEmitidas();
         }
         SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
+        LOGGER.log(Level.INFO, "Response From AEAT (toString) => " + soapResponse.toString());
         TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
 //        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
         SOAPBody tmpBody = soapResponse.getSOAPBody();
