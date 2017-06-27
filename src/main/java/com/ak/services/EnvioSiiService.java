@@ -61,14 +61,14 @@ public class EnvioSiiService {
 	            stream.forEach((line)->addStringToBuffer(line));
 	        }catch(Exception e){
 	        	LOGGER.log(Level.SEVERE, "ERROR : Loading file");
-	        	e.printStackTrace();
+	        	throw new IOException();
 	        }
 	        LOGGER.log(Level.INFO, "File Loaded");
     	}
     }
     
-    private synchronized TreeMap<String,ResultFactura> callAndReceive(String aXml, TreeMap<String, TrasiiKey> aKeys, String aModo) throws SOAPException, IOException, JAXBException {
-        getXmlFromFile(aXml);
+    private synchronized TreeMap<String,ResultFactura> callAndReceive(String aXml, TreeMap<String, TrasiiKey> aKeys, String aModo) throws Exception {
+    	getXmlFromFile(aXml);
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage(new MimeHeaders(), new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
         SOAPElement tmpPart = null,tmpElement, tmpElementRL, tmpIdFactura;
