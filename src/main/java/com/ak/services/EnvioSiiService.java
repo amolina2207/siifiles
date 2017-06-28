@@ -68,7 +68,9 @@ public class EnvioSiiService {
     
     private synchronized TreeMap<String,ResultFactura> callAndReceive(String aXml, TreeMap<String, TrasiiKey> aKeys, String aModo) throws Exception {
     	getXmlFromFile(aXml);
-        MessageFactory factory = MessageFactory.newInstance();
+    	TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
+//        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
+        /*MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage(new MimeHeaders(), new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
         SOAPElement tmpPart = null,tmpElement, tmpElementRL, tmpIdFactura;
         System.setProperty("javax.net.ssl.keyStore", wsprops.getPathCert());
@@ -84,15 +86,11 @@ public class EnvioSiiService {
         }
         LOGGER.log(Level.INFO, "Endpoint => " + tmpEndpoint);
         SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
-        
         LOGGER.log(Level.INFO, " ===== START Response From AEAT  ===== ");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         message.writeTo(out);
         LOGGER.log(Level.INFO, out.toString());
         LOGGER.log(Level.INFO, " ===== END Response From AEAT  ===== ");
-        
-        TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
-//        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
         SOAPBody tmpBody = soapResponse.getSOAPBody();
         java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
         String tmpEstado = "";
@@ -147,14 +145,14 @@ public class EnvioSiiService {
 					}
 				}
 			}
-        }
+        }*/
 		return results;
     }
         
     public void procesarFicheroYGuardarResultado(String aPath, TreeMap<String,TrasiiKey> aKeys, String aModo){
 		try {
 			TreeMap<String,ResultFactura> aResults = callAndReceive(aPath, aKeys, aModo);
-			if(aResults == null && aResults.size()==0){ LOGGER.log(Level.SEVERE, "No response from AEAT !!!"); throw new Exception(); }
+			if(aResults == null || ( aResults != null && aResults.size()==0 ) ){ LOGGER.log(Level.SEVERE, "No response from AEAT !!!"); throw new Exception(); }
 			if(aResults.size() != aKeys.size()){ LOGGER.log(Level.SEVERE, "No se han recibidos respuestas de todas las facturas enviadas !!!"); throw new Exception(); }
 			TrasiiBean aBean = null;
 			ResultFactura aResultF = null;
