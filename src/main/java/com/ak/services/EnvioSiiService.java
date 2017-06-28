@@ -131,11 +131,8 @@ public class EnvioSiiService {
 							} else if (tmpElementRL.getLocalName().equals("CSV")) {
 								// resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
-								// TODO: Comprobar si cuando hay mas de una factura esto sigue siendo correcto
-								// y otro caso a probar seria cuando hay 1 o n correctas e incorrectas. Cuidado porque esto sobreescribe el setCSV
-								// de arriba.
-								if(tmpElementRL.getValue().equalsIgnoreCase("Correcto")){
-									// resultFactura.setCsv(tmpTopCSV);
+								if(tmpElementRL.getValue().equalsIgnoreCase("Incorrecto")){
+									 resultFactura.setCsv(tmpTopCSV);
 								}
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
