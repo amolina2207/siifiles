@@ -83,6 +83,7 @@ public class EnvioSiiService {
         }else{
         	tmpEndpoint = wsprops.getEndpointEmitidas();
         }
+        LOGGER.log(Level.INFO, "Endpoint => " + tmpEndpoint);
         SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
         LOGGER.log(Level.INFO, "Response From AEAT (toString) => " + soapResponse.toString());
         TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
@@ -90,6 +91,7 @@ public class EnvioSiiService {
         SOAPBody tmpBody = soapResponse.getSOAPBody();
         java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
         String tmpEstado = "";
+        String tmpTopCSV = "";
         ResultFactura resultFactura;
 		while (tmpParts.hasNext()) {
 			try {
@@ -104,6 +106,8 @@ public class EnvioSiiService {
 				if (tmpElement != null) {
 					if (tmpElement.getLocalName().equals("EstadoEnvio")) {
 						tmpEstado = tmpElement.getValue();
+					}else if (tmpElement.getLocalName().equals("CSV")) {	
+						tmpTopCSV = tmpElement.getValue();
 					}else if (tmpElement.getLocalName().equals("RespuestaLinea")) {
 						java.util.Iterator<?> itemsRL = tmpElement.getChildElements();
 						resultFactura = new ResultFactura();
@@ -121,6 +125,12 @@ public class EnvioSiiService {
 							} else if (tmpElementRL.getLocalName().equals("CSV")) {
 								resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
+								// TODO: Comprobar si cuando hay mas de una factura esto sigue siendo correcto
+								// y otro caso a probar seria cuando hay 1 o n correctas e incorrectas. Cuidado porque esto sobreescribe el setCSV
+								// de arriba.
+								if(tmpElementRL.getValue().equalsIgnoreCase("Correcto")){
+									resultFactura.setCsv(tmpTopCSV);
+								}
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
 								resultFactura.setErrorCode(tmpElementRL.getValue());
