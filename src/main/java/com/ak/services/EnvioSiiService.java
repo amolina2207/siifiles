@@ -70,7 +70,7 @@ public class EnvioSiiService {
     	getXmlFromFile(aXml);
     	TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
 //        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
-        /*MessageFactory factory = MessageFactory.newInstance();
+        MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage(new MimeHeaders(), new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
         SOAPElement tmpPart = null,tmpElement, tmpElementRL, tmpIdFactura;
         System.setProperty("javax.net.ssl.keyStore", wsprops.getPathCert());
@@ -88,8 +88,8 @@ public class EnvioSiiService {
         SOAPMessage soapResponse = soapConnection.call(message, tmpEndpoint);
         LOGGER.log(Level.INFO, " ===== START Response From AEAT  ===== ");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        message.writeTo(out);
-        LOGGER.log(Level.INFO, out.toString());
+        soapResponse.writeTo(out);
+        LOGGER.log(Level.INFO, out.toString().replaceAll(" ", ""));
         LOGGER.log(Level.INFO, " ===== END Response From AEAT  ===== ");
         SOAPBody tmpBody = soapResponse.getSOAPBody();
         java.util.Iterator<?> tmpParts = tmpBody.getChildElements();
@@ -106,6 +106,7 @@ public class EnvioSiiService {
 			java.util.Iterator<?> items = tmpPart.getChildElements();
 			while (items.hasNext()) {
 				tmpElement = (SOAPElement) items.next();
+				LOGGER.log(Level.INFO, "Element => " + tmpElement.getLocalName());
 				if (tmpElement != null) {
 					if (tmpElement.getLocalName().equals("EstadoEnvio")) {
 						tmpEstado = tmpElement.getValue();
@@ -114,6 +115,7 @@ public class EnvioSiiService {
 					}else if (tmpElement.getLocalName().equals("RespuestaLinea")) {
 						java.util.Iterator<?> itemsRL = tmpElement.getChildElements();
 						resultFactura = new ResultFactura();
+						if(!"".equals(tmpTopCSV)) resultFactura.setCsv(tmpTopCSV);
 						while (itemsRL.hasNext()) {
 							tmpElementRL = (SOAPElement) itemsRL.next();
 							if (tmpElementRL.getLocalName().equals("IDFactura")) {
@@ -126,13 +128,13 @@ public class EnvioSiiService {
 								}
 							// TODO: Comprobar si el campo CSV llega a este nivel
 							} else if (tmpElementRL.getLocalName().equals("CSV")) {
-								resultFactura.setCsv(tmpElementRL.getValue());
+								// resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
 								// TODO: Comprobar si cuando hay mas de una factura esto sigue siendo correcto
 								// y otro caso a probar seria cuando hay 1 o n correctas e incorrectas. Cuidado porque esto sobreescribe el setCSV
 								// de arriba.
 								if(tmpElementRL.getValue().equalsIgnoreCase("Correcto")){
-									resultFactura.setCsv(tmpTopCSV);
+									// resultFactura.setCsv(tmpTopCSV);
 								}
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
@@ -145,7 +147,7 @@ public class EnvioSiiService {
 					}
 				}
 			}
-        }*/
+        }
 		return results;
     }
         
