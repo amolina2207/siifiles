@@ -79,6 +79,7 @@ public class EnvioSiiService {
         SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection soapConnection = soapConnectionFactory.createConnection();
         String tmpEndpoint = null;
+        LOGGER.log(Level.INFO, "Modo => " + aModo);
         if(aModo.equals("R")){
         	tmpEndpoint = wsprops.getEndpointRecibidas();
         }else{
