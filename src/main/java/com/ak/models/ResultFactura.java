@@ -2,11 +2,11 @@ package com.ak.models;
 
 public class ResultFactura {
 	
-	private String idFactura;
-	private String errorCode;
-	private String errorDesc;
-	private String estadoRegistro;
-	private String csv;
+	private String idFactura = "";
+	private String errorCode = "";
+	private String errorDesc = "";
+	private String estadoRegistro = "";
+	private String csv = "";
 	
 	@Override
 	public int hashCode() {
