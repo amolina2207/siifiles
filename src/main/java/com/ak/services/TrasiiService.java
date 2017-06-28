@@ -57,7 +57,7 @@ public class TrasiiService {
             if(tmpCompany == null){
             	tmpCompany = inKey.getCompaak();
             	tmpEmpresa = inKey.getEmpresa();
-            	tmpModo = inKey.getFacfec();
+            	tmpModo = inKey.getFacter();
             }
         }
         // Inserto un registro en la tabla de control con el numero de proceso
