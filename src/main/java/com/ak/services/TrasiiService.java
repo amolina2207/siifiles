@@ -23,7 +23,7 @@ import com.ak.repositories.TrasiiRepository;
 @Service
 public class TrasiiService {
 
-	private static final int SEGUNDOS_POR_FACTURA = 3;
+	private static final int SEGUNDOS_POR_FACTURA = 5;
 	
 	private static final Logger LOGGER = Logger.getLogger(EnvioSiiService.class.getName());
 	
