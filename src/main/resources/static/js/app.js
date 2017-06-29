@@ -51,14 +51,11 @@ app.service('TrasiiCRUDService', [ '$http', function($http) {
 //      }
 //  });
 //}
-
-    
-
 }
 ]);
 
 app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$log', '$filter',
-    function ($scope, TrasiiCRUDService, $uibModal, $log) {
+    function ($scope, TrasiiCRUDService, $uibModal, $log, $filter) {
 
 		$scope.btnProcesar = "";
 		$scope.years = {
@@ -85,10 +82,11 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         var setOfKeys = new StringSet();
         $scope.totalItems = 0;
         $scope.currentPage = 1;
-        $scope.itemsPerPage = 50;
+        $scope.itemsPerPage = 1000;
         $scope.itemsToShow;
         $scope.rowIndex = -1;
         $scope.isRowSelected = [];
+        
         
         $scope.setPage = function (pageNo) {
             $scope.currentPage = pageNo;
@@ -100,25 +98,47 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
             $scope.itemsToShow = $scope.trasii2.slice(offset,to);
             $log.log('Showing items -> From: ' + offset + ' To: ' + to);
         };
+       
+        $scope.selectAll = function(tipo){
+        	// $scope.filteredData = $filter('filter')($scope.itemsToShow, $scope.trasiisfilter.id.facter);
+        	//if($scope.trasiisfilter.id.facter == ""){
+        		//$scope.errorMessage = 'Hay que seleccionar un tipo de factura antes. [R-F].';
+        	//}else{
+	            setOfKeys.clear();
+	    		$scope.modo = "";
+	    		$scope.isRowSelected = [];
+	    		
+	        	angular.forEach($scope.itemsToShow, (item) => {
+	        		if(item.id.facter == tipo){
+	        			$log.log(' item.id.facter == tipo ' + item.id.facter + " - " + tipo);
+	        			$scope.setSelected(item,item.id.facnum)
+	        		}
+	        	});
+        	//}
+        };
         
         $scope.setSelected = function(tra,facnum) {
-        	if($scope.modo === undefined || $scope.modo == "" || $scope.modo == tra.id.facter){
-        		$scope.errorMessage = '';
-        		$scope.modo = tra.id.facter;
-        		$scope.isRowSelected[facnum] = ( $scope.isRowSelected[facnum] === undefined || $scope.isRowSelected[facnum] === false ) ? true : false;
-                var keyRow = tra.id.compaak.concat("||").concat(tra.id.empresa).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo).concat("||").concat(tra.id.eminif).concat("||").concat(tra.id.facnum).concat("||").concat(tra.id.facfec).concat("||").concat(tra.id.facter);
-                if(setOfKeys.contains(keyRow)){
-                    setOfKeys.remove(keyRow);
-                    if(setOfKeys.values().length == 0){
-                    	$scope.modo = ""; // Reseteamos el control de modo
-                    }
-                }else{
-                    setOfKeys.add(keyRow);
-                }
-                console.log(setOfKeys.values());
-                
-        	}else{ // Esta seleccionando registros de facturas emitidas y recibidas a la misma vez.
-        		$scope.errorMessage = 'No se pueden seleccionar registros de facturas emitidas y recibidas a la misma vez.';
+        	if(tra.rescsv.trim() !== ""){
+        		$scope.errorMessage = 'No se pueden seleccionar registros ya procesados [CSV].';
+        	}else{
+	        	if($scope.modo === undefined || $scope.modo == "" || $scope.modo == tra.id.facter ){
+	        		$scope.errorMessage = '';
+	        		$scope.modo = tra.id.facter;
+	        		$scope.isRowSelected[facnum] = ( $scope.isRowSelected[facnum] === undefined || $scope.isRowSelected[facnum] === false ) ? true : false;
+	                var keyRow = tra.id.compaak.concat("||").concat(tra.id.empresa).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo).concat("||").concat(tra.id.eminif).concat("||").concat(tra.id.facnum).concat("||").concat(tra.id.facfec).concat("||").concat(tra.id.facter);
+	                if(setOfKeys.contains(keyRow)){
+	                    setOfKeys.remove(keyRow);
+	                    if(setOfKeys.values().length == 0){
+	                    	$scope.modo = ""; // Reseteamos el control de modo
+	                    }
+	                }else{
+	                    setOfKeys.add(keyRow);
+	                }
+	                console.log(setOfKeys.values());
+	                
+	        	}else{ // Esta seleccionando registros de facturas emitidas y recibidas a la misma vez.
+	        		$scope.errorMessage = 'No se pueden seleccionar registros de facturas emitidas y recibidas a la misma vez.';
+	        	}
         	}
         };
 
@@ -135,10 +155,8 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                             $scope.errorMessage = '';
                             $scope.isRowSelected = []
                             setOfKeys.clear();
-                            
                             $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
                             $scope.modo = ""; // Reseteamos el control de modo
-                           
                     },
                     function error(response) {
                         $scope.message = '';
@@ -230,12 +248,13 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                         $scope.totalItems = $scope.trasii2.length
                         $scope.itemsToShow = $scope.trasii2.slice(0,$scope.itemsPerPage);
                         $scope.message='';
-                        $scope.errorMessage = '';            
+                        $scope.errorMessage = '';
                     },
                     function error (response) {
                         $scope.message='';
                         $scope.errorMessage = 'Error getting Trasii!';
                     });
+            
         }
 
         $scope.getTrasii = function (selectedRow) {

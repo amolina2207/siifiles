@@ -100,6 +100,7 @@
                 <table class="table table-striped table-bordered table-list" style="font-size: 12px">
                     <thead>
                     <tr style="height:20px;">
+
 	                    Empresa: <input type="text" ng-model="trasiisfilter.id.empresa" style="width: 30px" maxlength="2"/>
 			            Ejercicio:
 			            <select ng-model="trasiisfilter.id.ejercio">
@@ -109,24 +110,29 @@
 			            <select ng-model="trasiisfilter.id.periodo">
     						<option ng-repeat="(key, value) in months" value="{{key}}">{{value}}</option>
 						</select>
-			            NIF: <input type="text" ng-model="trasiisfilter.id.eminif" style="width: 100px" maxlength="25"/>
+			            NIF: <input type="text" ng-model="trasiisfilter.facnif" style="width: 100px" maxlength="25"/>
+			            Serie: <input type="text" ng-model="trasiisfilter.factip" style="width: 30px" maxlength="2"/>
 			            Factura: <input type="text" ng-model="trasiisfilter.id.facnum" style="width: 100px" maxlength="10"/>
 			            Tipo R/E:
-			            <select name="tipo" ng-model="trasiisfilter.id.facter">
+			            <select ng-model="trasiisfilter.id.facter">
 			            	<option value="E">E</option>
 			            	<option value="R">R</option>
 			            </select>
+			            {{trasiisfilter.id.facter}}
                     </tr>
                     <tr>
-                        <th><em class="fa fa-cog"></em></th>
-<!--                         <th class="hidden-xs">Company</th> -->
-                        <th>Empresa</th>
-                        <th>Ejercicio</th>
-                        <th>Periodo</th>
+                        <th>
+<!--                         <input type="button" value="Seleccionar E" ng-click="selectAll('E')" /><br /> -->
+<!--                         <input type="button" value="Seleccionar R" ng-click="selectAll('R')" /> -->
+                        </th>
+                        <th>Emp</th>
+                        <th>Año</th>
+                        <th>Mes</th>
                         <th>NIF</th>
+                        <th>Nombre</th>
                         <th>Num Factura</th>
 <!--                         <th>Fecha Factura</th> -->
-                        <th>Facter</th>
+                        <th>R/E</th>
 <!--                         <th>Emp Cif</th> -->
 <!--                         <th>Repcif</th> -->
                         <th>Tipo com</th>
@@ -139,7 +145,7 @@
                     </thead>
                     <tbody>
 					<tr
-					ng-repeat="tra in itemsToShow | filter:trasiisfilter"
+					ng-repeat="tra in itemsToShow | filter:trasiisfilter "
 					ng-click="setSelected(tra,tra.id.facnum)"
 					ng-class="isRowSelected[tra.id.facnum] ? 'selectedRow':''">
                         <td align="center">
@@ -156,7 +162,8 @@
                             <td>{{ tra.id.empresa }}</td>
                             <td>{{ tra.id.ejercio }}</td>
                             <td>{{ tra.id.periodo }}</td>
-                            <td>{{ tra.id.eminif }}</td>
+                            <td>{{ tra.facnif }}</td>
+                            <td>{{ tra.facnom }}</td>
                             <td>{{ tra.id.facnum }}</td>
 <!--                             <td>{{ tra.id.facfec }}</td> -->
                             <td>{{ tra.id.facter }}</td>
