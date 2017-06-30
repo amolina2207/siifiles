@@ -20,6 +20,16 @@ public class ResultFactura {
 		return result;
 	}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "ResultFactura [idFactura=" + idFactura + ", errorCode=" + errorCode + ", errorDesc=" + errorDesc
+				+ ", estadoRegistro=" + estadoRegistro + ", csv=" + csv + "]";
+	}
+
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

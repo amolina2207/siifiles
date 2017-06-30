@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -157,14 +158,22 @@ public class EnvioSiiService {
 			TrasiiBean aBean = null;
 			ResultFactura aResultF = null;
 			for(TrasiiKey aKey : aKeys.values()){
-				aBean = trasiiRepository.findOne(aKey);	
-				aResultF = aResults.get(aKey.getFacnum().trim());
-				aBean.setRescsv(aResultF.getCsv());
-				aBean.setReserr(aResultF.getErrorCode());
-				aBean.setResdes(aResultF.getErrorDesc());
-				// TODO :: Hablar con Manel para que haga este campo un poco mas grande
-				aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
-				trasiiRepository.save(aBean);
+				aBean = trasiiRepository.findOne(aKey);
+				if(aBean != null){
+					aResultF = aResults.get(aKey.getFacnum().trim());
+					aBean.setRescsv(aResultF.getCsv());
+					aBean.setReserr(aResultF.getErrorCode());
+					aBean.setResdes(aResultF.getErrorDesc());
+					aBean.setResfer(new java.sql.Date(new Date().getTime()));
+					aBean.setReshor(new java.sql.Time(new Date().getTime()));
+	//				aBean.setResemi("");
+	//				aBean.setResfac("");
+					// TODO :: Hablar con Manel para que haga este campo un poco mas grande
+					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
+					trasiiRepository.save(aBean);
+				}else{
+					LOGGER.log(Level.SEVERE, "Registro del TRASII imposible de recuperar, por lo tanto el resultado no se puede guardar " + aResultF);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
