@@ -86,12 +86,24 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         $scope.itemsToShow;
         $scope.rowIndex = -1;
         $scope.isRowSelected = [];
+        $scope.allItems = [];
         
+        $scope.swichState = function(){
+        	$scope.itemsToShow = [];
+        	var onlyPendientes = $scope.csvSwitch == "empty";
+        	angular.forEach($scope.allItems, (row) => {
+        		if(onlyPendientes && row.rescsv.trim().length == 0){ // Si campo RESCSV esta vacio significa que esta pendiente
+    				$scope.itemsToShow.push(row);
+    			}else if(!onlyPendientes && row.rescsv.trim().length > 0){ // Si el campo RESCSV NO esta vacio significa que esta procesado
+    				$scope.itemsToShow.push(row);
+    			}
+        	});
+        };
         
         $scope.setPage = function (pageNo) {
             $scope.currentPage = pageNo;
         };
-
+        
         $scope.pageChanged = function() {
             var offset = ($scope.currentPage - 1) * $scope.itemsPerPage;
             var to = offset + $scope.itemsPerPage;
@@ -147,8 +159,9 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
             	$scope.btnProcesar = "false";
                 TrasiiCRUDService.procesarRegistros(setOfKeys.values())
                     .then(function success(response) {
-                            $scope.trasii2 = response.data
-                            $scope.totalItems = $scope.trasii2.length
+                            $scope.allItems = response.data;
+                            $scope.trasii2 = $scope.allItems;
+                            $scope.totalItems = $scope.trasii2.length;
                             $scope.itemsToShow = $scope.trasii2.slice(0, $scope.itemsPerPage);
                             $scope.currentPage = 1;
                             $scope.message = '';
@@ -243,7 +256,8 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         $scope.getAllTrasii = function () {
             TrasiiCRUDService.getAllTrasii()
                 .then(function success(response) {
-                        $scope.trasii2 = response.data;
+                        $scope.allItems = response.data;
+                        $scope.trasii2 = $scope.allItems;
                         $scope.totalPages = Math.ceil($scope.trasii2.length / $scope.itemsPerPage);
                         $scope.totalItems = $scope.trasii2.length
                         $scope.itemsToShow = $scope.trasii2.slice(0,$scope.itemsPerPage);

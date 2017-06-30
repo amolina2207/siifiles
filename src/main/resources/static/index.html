@@ -118,7 +118,11 @@
 			            	<option value="E">E</option>
 			            	<option value="R">R</option>
 			            </select>
-			            {{trasiisfilter.id.facter}}
+			            Pen / Ter
+			            <select ng-model="csvSwitch" ng-change="swichState()">
+			            	<option value="empty">Pendiente</option>
+			            	<option value="nonEmpty">Terminado</option>
+			            </select>
                     </tr>
                     <tr>
                         <th>
