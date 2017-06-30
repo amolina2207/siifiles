@@ -1,6 +1,7 @@
 package com.ak.services;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +53,11 @@ public class TrasiiService {
         // Marco todos los registros seleccionados con un numero de proceso
         for(TrasiiKey inKey : aKeys.values()) {
             inBean = repository.findOne(inKey);
+            
+            // TODO: Parche provisional
+            inBean.setEmiftr(new java.sql.Date(new Date().getTime()));
+            inBean.setResfer(new java.sql.Date(new Date().getTime()));
+            
             inBean.setEmipro(aNumPro);
             repository.save(inBean);
             if(tmpCompany == null){
