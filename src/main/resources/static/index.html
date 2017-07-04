@@ -75,7 +75,7 @@
     <div class="row">
         <div class="col-lg-12 text-center">
 
-<div ng-controller="TrasiiCRUDCtrl" ng-init="getAllTrasii()">
+<div ng-controller="TrasiiCRUDCtrl">
 
     <p style="color: green">{{message}}</p>
 <!--     <p style="color: red">{{errorMessage}}</p> -->
@@ -118,16 +118,16 @@
 			            	<option value="E">E</option>
 			            	<option value="R">R</option>
 			            </select>
+<!-- 			            <select ng-model="csvSwitch" ng-change="swichState()"> -->
+<!-- 			            	<option value="empty">Pendiente</option> -->
+<!-- 			            	<option value="nonEmpty">Terminado</option> -->
+<!-- 			            </select> -->
 			            Pen / Ter
-			            <select ng-model="csvSwitch" ng-change="swichState()">
-			            	<option value="empty">Pendiente</option>
-			            	<option value="nonEmpty">Terminado</option>
-			            </select>
+						<select ng-options="state as state.desc for state in states track by state.id" ng-model="csvSwitch" ng-change="swichState()" ></select>
                     </tr>
                     <tr>
                         <th>
-<!--                         <input type="button" value="Seleccionar E" ng-click="selectAll('E')" /><br /> -->
-<!--                         <input type="button" value="Seleccionar R" ng-click="selectAll('R')" /> -->
+							<input type="button" value="All" ng-click="selectAll()" /><br />
                         </th>
                         <th>Emp</th>
                         <th>Año</th>
@@ -147,22 +147,23 @@
 						<th>Detalle</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody>					
 					<tr
 					ng-repeat="tra in itemsToShow | filter:trasiisfilter "
-					ng-click="setSelected(tra,tra.id.facnum)"
-					ng-class="isRowSelected[tra.id.facnum] ? 'selectedRow':''">
+					ng-click="setSelected(tra)"
+					ng-class="isRowSelected[tra.keySelectedRow] ? 'selectedRow':''">
                         <td align="center">
                             <!--<a class="btn btn-default" ng-click="getTrasii(tra)"><em class="fa fa-pencil"></em></a> -->
                             <!--<input type="checkbox" ng-checked="item.isRowSelected" ng-click="toggleSelection({{ tra.id.compaak }})" value="{{ tra.id.compaak }}||{{ tra.id.empresa }}||{{ tra.id.ejercio }}||{{ tra.id.periodo }}||{{ tra.id.eminif }}||{{ tra.id.facnum }}||{{ tra.id.facfec }}||{{ tra.id.facter }}||{{ tra.empcif }}" />-->
 <!--                            <a class="btn btn-default" ng-click="open()"><em class="fa fa-pencil"></em></a> -->
 <!--                            <a ng-click="open()"><em class="fa fa-pencil"></em></a> -->
                            
-                           <a class="btn btn-default" ng-click="open(tra)"> <i class="fa fa-pencil fa-3x" style="float: left; font-size: 10px"></i></a>
+                           <a class="btn btn-default" ng-click="open(tra)"><i class="fa fa-pencil fa-3x" style="float: left; font-size: 10px"></i></a>
                            
 <!--                              <a class="btn btn-danger"><em class="fa fa-trash"></em></a> -->
                         </td>
 <!--                             <td class="hidden-xs">{{ tra.id.compaak }}</td> -->
+							
                             <td>{{ tra.id.empresa }}</td>
                             <td>{{ tra.id.ejercio }}</td>
                             <td>{{ tra.id.periodo }}</td>

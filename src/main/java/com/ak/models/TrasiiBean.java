@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.function.Function;
 
 /**
  * Created by amolina on 19/05/17.
@@ -14,7 +15,9 @@ import java.sql.Time;
 @Table(name="TRASII")
 //@IdClass(TrasiiKey.class)
 public class TrasiiBean implements Serializable {
-
+	
+	private static final String KEY_SEPARATOR = "||";
+	
     @EmbeddedId
     private TrasiiKey id;
 
@@ -43,7 +46,7 @@ public class TrasiiBean implements Serializable {
     @Column(name = "FACTER")
     @Id private String facter;
     */
-
+    
     @Column(name = "EMPCIF")
     private String empcif;
 
@@ -253,8 +256,21 @@ public class TrasiiBean implements Serializable {
 
     @Column(name = "RESDES")
     private String resdes;
-
-
+    
+    @Transient
+    private String keySelectedRow;
+    
+    public void setKeySelectedRow(){
+    	keySelectedRow = getId().getCompaak().trim()
+			+ KEY_SEPARATOR + getId().getEmpresa().trim()
+			+ KEY_SEPARATOR + getId().getEjercio()
+			+ KEY_SEPARATOR + getId().getPeriodo().trim()
+			+ KEY_SEPARATOR + getId().getEminif().trim()
+			+ KEY_SEPARATOR + getId().getFacnum().trim()
+			+ KEY_SEPARATOR + getId().getFacfec().trim()
+			+ KEY_SEPARATOR + getId().getFacter().trim();
+    }
+    
     public String getEmpcif() {
         return empcif;
     }
@@ -824,4 +840,25 @@ public class TrasiiBean implements Serializable {
     public void setId(TrasiiKey id) {
         this.id = id;
     }
+    
+    @Transient
+    Function<TrasiiBean, TrasiiBean> setAttributeToBean = new Function<TrasiiBean, TrasiiBean>(){
+    	@Override
+    	public TrasiiBean apply(TrasiiBean aTra){
+    		aTra.setKeySelectedRow();
+    		return aTra;
+    	}
+	};
+
+	public Function<TrasiiBean, TrasiiBean> getSetAttributeToBean() {
+		return setAttributeToBean;
+	}
+
+	public String getKeySelectedRow() {
+		return keySelectedRow;
+	}
+
+	public void setKeySelectedRow(String keySelectedRow) {
+		this.keySelectedRow = keySelectedRow;
+	}
 }

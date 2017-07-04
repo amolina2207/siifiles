@@ -87,17 +87,33 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         $scope.rowIndex = -1;
         $scope.isRowSelected = [];
         $scope.allItems = [];
+        $scope.allSelected = false;
+        $scope.trasiisfilter = {id: {facter: 'E'}};
+        $scope.states = [{
+        			id: "P", desc: 'Pendientes'
+        		} , {
+        			id: "E", desc: 'Enviadas'
+        		}];
+        $scope.csvSwitch = $scope.states[0];
+        
+        $scope.init = function () {
+           $log.log('init function executed');
+           $scope.getAllTrasii();  
+        }
         
         $scope.swichState = function(){
+        	$log.log('swichState function executed ' + $scope.itemsToShow.length);
         	$scope.itemsToShow = [];
-        	var onlyPendientes = $scope.csvSwitch == "empty";
+        	var data = [];
+        	var onlyPendientes = $scope.csvSwitch.id == "P";
         	angular.forEach($scope.allItems, (row) => {
         		if(onlyPendientes && row.rescsv.trim().length == 0){ // Si campo RESCSV esta vacio significa que esta pendiente
-    				$scope.itemsToShow.push(row);
+        			data.push(row);
     			}else if(!onlyPendientes && row.rescsv.trim().length > 0){ // Si el campo RESCSV NO esta vacio significa que esta procesado
-    				$scope.itemsToShow.push(row);
+    				data.push(row);
     			}
         	});
+        	$scope.itemsToShow = data;
         };
         
         $scope.setPage = function (pageNo) {
@@ -111,37 +127,40 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
             $log.log('Showing items -> From: ' + offset + ' To: ' + to);
         };
        
-        $scope.selectAll = function(tipo){
-        	// $scope.filteredData = $filter('filter')($scope.itemsToShow, $scope.trasiisfilter.id.facter);
-        	//if($scope.trasiisfilter.id.facter == ""){
-        		//$scope.errorMessage = 'Hay que seleccionar un tipo de factura antes. [R-F].';
-        	//}else{
-	            setOfKeys.clear();
-	    		$scope.modo = "";
-	    		$scope.isRowSelected = [];
-	    		
-	        	angular.forEach($scope.itemsToShow, (item) => {
-	        		if(item.id.facter == tipo){
-	        			$log.log(' item.id.facter == tipo ' + item.id.facter + " - " + tipo);
-	        			$scope.setSelected(item,item.id.facnum)
-	        		}
-	        	});
-        	//}
+        $scope.selectAll = function(){
+        	setOfKeys.clear();
+    		$scope.modo = "";
+    		var keyRow = "";
+    		$scope.isRowSelected = [];
+        	if($scope.allSelected == false){
+        		angular.forEach($scope.itemsToShow, (item) => {
+            		if($scope.modo == "") $scope.modo = $scope.trasiisfilter.id.facter;
+            		if($scope.modo == item.id.facter && item.rescsv.trim() == ""){
+            			keyRow = item.id.compaak.trim().concat("||").concat(item.id.empresa.trim()).concat("||").concat(item.id.ejercio).concat("||").concat(item.id.periodo.trim()).concat("||").concat(item.id.eminif.trim()).concat("||").concat(item.id.facnum.trim()).concat("||").concat(item.id.facfec.trim()).concat("||").concat(item.id.facter.trim());
+            			$scope.isRowSelected[keyRow] = true;
+            			setOfKeys.add(keyRow);
+            		}
+            	});
+        	}
+        	$scope.allSelected = !$scope.allSelected;
+        	$log.log('State of allSelected => ' +  $scope.allSelected);
         };
         
-        $scope.setSelected = function(tra,facnum) {
+        $scope.setSelected = function(tra) {
         	if(tra.rescsv.trim() !== ""){
         		$scope.errorMessage = 'No se pueden seleccionar registros ya procesados [CSV].';
         	}else{
 	        	if($scope.modo === undefined || $scope.modo == "" || $scope.modo == tra.id.facter ){
+	        		var keyRow = tra.id.compaak.trim().concat("||").concat(tra.id.empresa.trim()).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo.trim()).concat("||").concat(tra.id.eminif.trim()).concat("||").concat(tra.id.facnum.trim()).concat("||").concat(tra.id.facfec.trim()).concat("||").concat(tra.id.facter.trim());
 	        		$scope.errorMessage = '';
 	        		$scope.modo = tra.id.facter;
-	        		$scope.isRowSelected[facnum] = ( $scope.isRowSelected[facnum] === undefined || $scope.isRowSelected[facnum] === false ) ? true : false;
-	                var keyRow = tra.id.compaak.concat("||").concat(tra.id.empresa).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo).concat("||").concat(tra.id.eminif).concat("||").concat(tra.id.facnum).concat("||").concat(tra.id.facfec).concat("||").concat(tra.id.facter);
+	        		$scope.isRowSelected[keyRow] = ( $scope.isRowSelected[keyRow] === undefined || $scope.isRowSelected[keyRow] === false ) ? true : false;
+	                
 	                if(setOfKeys.contains(keyRow)){
+	                	$log.log('Removing one element => ' + keyRow);
 	                    setOfKeys.remove(keyRow);
 	                    if(setOfKeys.values().length == 0){
-	                    	$scope.modo = ""; // Reseteamos el control de modo
+	                    	$scope.modo = ""; // Reseteamos el control de modo, unicamente si la hash esta vacia.
 	                    }
 	                }else{
 	                    setOfKeys.add(keyRow);
@@ -166,7 +185,7 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                             $scope.currentPage = 1;
                             $scope.message = '';
                             $scope.errorMessage = '';
-                            $scope.isRowSelected = []
+                            $scope.isRowSelected = [];
                             setOfKeys.clear();
                             $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
                             $scope.modo = ""; // Reseteamos el control de modo
@@ -211,11 +230,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                 return values;
             };
         }
-
-//        $scope.dataForModal = {
-//            name: 'NameToEdit',
-//            value: 'ValueToEdit'
-//        }
         
         $scope.open = function(tra){
         	$scope.trasiimodal = tra;
@@ -223,11 +237,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         	$scope.theModal = $uibModal.open({
             	scope: $scope,
                 templateUrl : '../partial-views/editing-form.html',
-//                resolve: {
-//                    modalData: function() {
-//                        return $scope.dataForModal;
-//                    }
-//                }
             });
             
             $scope.ok = function () {
@@ -240,19 +249,8 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
             	console.log('Dismissed');
             	$scope.theModal.dismiss();
             };
-
-            
-            
-//            modalInstance.result.then(function(result) {
-//                console.info("I was closed, so do what I need to do myContent's controller now.  Result was->");
-//                console.info(result);
-//            }, function () {
-//                $log.info('Modal dismissed at: ' + new Date());
-//            });
         };
         
-      
-
         $scope.getAllTrasii = function () {
             TrasiiCRUDService.getAllTrasii()
                 .then(function success(response) {
@@ -263,6 +261,9 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                         $scope.itemsToShow = $scope.trasii2.slice(0,$scope.itemsPerPage);
                         $scope.message='';
                         $scope.errorMessage = '';
+                        
+                        $scope.csvSwitch.id = "P";
+                        $scope.swichState();
                     },
                     function error (response) {
                         $scope.message='';
@@ -334,4 +335,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                         $scope.message='';
                     });
         };*/
+        
+        $scope.init();
     }]);

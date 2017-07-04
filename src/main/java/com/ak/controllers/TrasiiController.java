@@ -1,21 +1,24 @@
 package com.ak.controllers;
 
-import com.ak.models.*;
-import com.ak.services.CtlsiiService;
-import com.ak.services.TrasiiService;
-import com.ak.utils.CountersUtils;
-
-import ch.qos.logback.classic.net.SyslogAppender;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ak.models.KeyAsString;
+import com.ak.models.TrasiiBean;
+import com.ak.models.TrasiiKey;
+import com.ak.services.TrasiiService;
+import com.ak.utils.CountersUtils;
 
 /**
  * Created by amolina on 19/05/17.
@@ -37,8 +40,9 @@ public class TrasiiController {
     @RequestMapping(value = "/trasii", method = RequestMethod.GET, produces = {"application/json"})
     public List<TrasiiBean> findAll(){
         List<TrasiiBean> tmpResult = trassiService.findAll();
+        tmpResult.forEach(aBean -> aBean.setKeySelectedRow());
         return tmpResult;
-    }
+	}
 
     @RequestMapping(value = "/trasii/procesar", method = RequestMethod.POST, produces = {"application/json"})
     public List<TrasiiBean> procesarRegistros(@RequestBody KeyAsString registros) {
