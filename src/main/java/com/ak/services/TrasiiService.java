@@ -45,7 +45,7 @@ public class TrasiiService {
         return tmpResult;
     }
 
-    public void procesarRegistros(TreeMap<String,TrasiiKey> aKeys, BigDecimal aNumPro){
+    public void procesarRegistros(TreeMap<String,TrasiiKey> aKeys, BigDecimal aNumPro) throws Exception{
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
         CtlsiiKey keyBean;
@@ -53,7 +53,7 @@ public class TrasiiService {
         // Marco todos los registros seleccionados con un numero de proceso
         for(TrasiiKey inKey : aKeys.values()) {
             inBean = repository.findOne(inKey);
-            
+            if(inBean == null) throw new Exception("No se ha podido recuperar el registro ["+inKey.toString()+"]");            
             // TODO: Parche provisional
             inBean.setEmiftr(new java.sql.Date(new Date().getTime()));
             inBean.setResfer(new java.sql.Date(new Date().getTime()));

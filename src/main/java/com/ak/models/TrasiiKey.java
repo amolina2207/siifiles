@@ -93,6 +93,15 @@ public class TrasiiKey implements Serializable{
 		return true;
 	}
 
+	
+	
+	@Override
+	public String toString() {
+		return "TrasiiKey [compaak=" + compaak + ", empresa=" + empresa + ", ejercio=" + ejercio + ", periodo="
+				+ periodo + ", eminif=" + eminif + ", facnum=" + facnum + ", facfec=" + facfec + ", facter=" + facter
+				+ "]";
+	}
+
 	public String getCompaak() {
         return compaak;
     }

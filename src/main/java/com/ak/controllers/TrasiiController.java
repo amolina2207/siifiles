@@ -55,7 +55,11 @@ public class TrasiiController {
     		if(optKeyBeans.isPresent() && optKeyBeans.get().size()>0){
     			Optional<BigDecimal> tmpNumP = Optional.ofNullable(CountersUtils.randomIdGenerator());
     			if(tmpNumP.isPresent()){
-    				trassiService.procesarRegistros(optKeyBeans.get(), tmpNumP.get());
+    				try{
+    					trassiService.procesarRegistros(optKeyBeans.get(), tmpNumP.get());
+    				}catch(Exception e){
+    					e.printStackTrace();
+    				}
     			}
     		}
     	}
