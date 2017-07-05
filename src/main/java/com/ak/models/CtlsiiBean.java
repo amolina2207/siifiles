@@ -1,13 +1,14 @@
 package com.ak.models;
 
+import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Time;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
 
 /**
  * Created by amolina on 19/05/17.
@@ -15,6 +16,7 @@ import java.sql.Time;
 
 @Entity(name = "Ctlsii")
 @Table(name="CTLSII")
+@Cacheable(false)
 public class CtlsiiBean implements Serializable {
 
     @EmbeddedId
