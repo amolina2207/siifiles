@@ -82,7 +82,7 @@ public class EnvioSiiService {
 	        	e.printStackTrace();
 	        }
 	        if(sb.toString().length()>0){
-	        	LOGGER.log(Level.INFO, "File Loaded");
+	        	LOGGER.log(Level.INFO, "File Loaded " + aPath);
 	        }else{
 	        	LOGGER.log(Level.SEVERE, "File NOT loaded");
 	        }
