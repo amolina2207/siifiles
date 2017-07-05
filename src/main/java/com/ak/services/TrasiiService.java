@@ -92,6 +92,7 @@ public class TrasiiService {
         int intents = -5;
         CtlsiiBean aBeanData = null;
         try{
+        	LOGGER.log(Level.INFO, "Before control loop"); 
         	while(intents<0){
         		aBeanData = ctlsiiService.findOne(keyBean);
         		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
