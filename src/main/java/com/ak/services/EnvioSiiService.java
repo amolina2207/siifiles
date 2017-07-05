@@ -61,7 +61,7 @@ public class EnvioSiiService {
 	        File tmpFile = new File(aPath);
 	        boolean existsOrReady = false;
 	        int intents = 0;
-	        while(!existsOrReady || intents < 3){
+	        while(!existsOrReady && intents < 3){
 	        	existsOrReady = tmpFile.exists();
 	        	if(!existsOrReady){
 	        		try {
