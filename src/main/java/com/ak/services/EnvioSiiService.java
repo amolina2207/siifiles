@@ -57,6 +57,7 @@ public class EnvioSiiService {
     	if(aPath.equals("")){
     		LOGGER.log(Level.SEVERE, "File path empty !!!");
     	}else{
+    		LOGGER.log(Level.INFO, "Processing: " + aPath);
 	        newBuffer();
 	        File tmpFile = new File(aPath);
 	        boolean existsOrReady = false;
@@ -82,7 +83,7 @@ public class EnvioSiiService {
 	        	e.printStackTrace();
 	        }
 	        if(sb.toString().length()>0){
-	        	LOGGER.log(Level.INFO, "File Loaded " + aPath);
+	        	LOGGER.log(Level.INFO, "File Loaded");
 	        }else{
 	        	LOGGER.log(Level.SEVERE, "File NOT loaded");
 	        }
