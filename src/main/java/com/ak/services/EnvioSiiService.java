@@ -201,6 +201,7 @@ public class EnvioSiiService {
 					// TODO :: Hablar con Manel para que haga este campo un poco mas grande
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
 					trasiiRepository.save(aBean);
+					entityManager.flush();
 					entityManager.clear();
 				}else{
 					LOGGER.log(Level.SEVERE, "Registro del TRASII imposible de recuperar, por lo tanto el resultado no se puede guardar " + aResultF);
