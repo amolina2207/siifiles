@@ -104,7 +104,7 @@ public class TrasiiService {
         			
         		LOGGER.log(Level.INFO, "aBeanData use value " + aEstado); 
 //        		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
-        		if(aBeanData != null && FIN.equals(aEstado)){
+        		if(aBeanData != null && FIN.equals(aEstado.trim())){
         			intents=0;
         			LOGGER.log(Level.INFO, "Procesando fichero xml, intento(s) " + intents);
         			envioSiiService.procesarFicheroYGuardarResultado(getPathfiles()+"SII_"+aNumPro+".xml",aKeys,tmpModo);
