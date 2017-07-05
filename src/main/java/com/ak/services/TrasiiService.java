@@ -69,6 +69,7 @@ public class TrasiiService {
             
             inBean.setEmipro(aNumPro);
             repository.save(inBean);
+            entityManager.clear();
             if(tmpCompany == null){
             	tmpCompany = inKey.getCompaak();
             	tmpEmpresa = inKey.getEmpresa();
@@ -136,7 +137,9 @@ public class TrasiiService {
     }
 
     public TrasiiBean save(TrasiiBean data){
-        return repository.save(data);
+    	TrasiiBean aResult = repository.save(data);
+    	entityManager.clear();
+        return aResult;
     }
 
 	public String getPathfiles() {

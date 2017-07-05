@@ -2,17 +2,16 @@ package com.ak.services;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import javax.persistence.EntityManager;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
@@ -36,6 +35,9 @@ public class EnvioSiiService {
 	
 	@Autowired
 	private TrasiiRepository trasiiRepository;
+	
+	@Autowired
+    private EntityManager entityManager;
 	
 	@Autowired
 	private WSProps wsprops;
@@ -198,6 +200,7 @@ public class EnvioSiiService {
 					// TODO :: Hablar con Manel para que haga este campo un poco mas grande
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
 					trasiiRepository.save(aBean);
+					entityManager.clear();
 				}else{
 					LOGGER.log(Level.SEVERE, "Registro del TRASII imposible de recuperar, por lo tanto el resultado no se puede guardar " + aResultF);
 				}
