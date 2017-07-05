@@ -69,6 +69,7 @@ public class TrasiiService {
             
             inBean.setEmipro(aNumPro);
             repository.save(inBean);
+            entityManager.flush();
             entityManager.clear();
             if(tmpCompany == null){
             	tmpCompany = inKey.getCompaak();
@@ -88,6 +89,7 @@ public class TrasiiService {
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
         ctlsiiService.save(ctlBean);
+        entityManager.flush();
         entityManager.clear();
         int intents = -5;
         CtlsiiBean aBeanData = null;
@@ -140,6 +142,7 @@ public class TrasiiService {
 
     public TrasiiBean save(TrasiiBean data){
     	TrasiiBean aResult = repository.save(data);
+    	entityManager.flush();
     	entityManager.clear();
         return aResult;
     }
