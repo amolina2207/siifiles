@@ -95,6 +95,7 @@ public class TrasiiService {
         	LOGGER.log(Level.INFO, "Before control loop"); 
         	while(intents<0){
         		aBeanData = ctlsiiService.findOne(keyBean);
+        		LOGGER.log(Level.INFO, "aBeanData use value " + aBeanData.getCtluse()); 
         		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
         			intents=0;
         			LOGGER.log(Level.INFO, "Procesando fichero xml, intento(s) " + intents);
