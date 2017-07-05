@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,6 @@ import com.ak.models.CtlsiiBean;
 import com.ak.models.CtlsiiKey;
 import com.ak.models.TrasiiBean;
 import com.ak.models.TrasiiKey;
-import com.ak.repositories.CtlsiiDao;
 import com.ak.repositories.TrasiiRepository;
 
 /**
@@ -38,12 +38,9 @@ public class TrasiiService {
     private CtlsiiService ctlsiiService;
     
     @Autowired
-    private CtlsiiDao aDaoCtl;
-    
-    @Autowired
     private EnvioSiiService envioSiiService;
     
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
     
     @Autowired
@@ -91,18 +88,23 @@ public class TrasiiService {
         ctlBean.setCtlhcr();
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
-//        ctlsiiService.save(ctlBean);
-//        entityManager.persist(ctlBean);
-        aDaoCtl.create(ctlBean);
-//        entityManager.clear();
+        ctlsiiService.save(ctlBean);
         int intents = -5;
         CtlsiiBean aBeanData = null;
+        
+        javax.persistence.Query aSql = entityManager.createNativeQuery("SELECT CTLUSE FROM CTLSII WHERE COMPAAK='"+tmpCompany+"' AND EMPRESA='"+tmpEmpresa+"' AND CTLPRO='"+aNumPro+"'");
+        List<String> aResults;
+        String aEstado = null;
         try{
         	LOGGER.log(Level.INFO, "Before control loop"); 
         	while(intents<0){
-        		aBeanData = ctlsiiService.findOne(keyBean);
-        		LOGGER.log(Level.INFO, "aBeanData use value " + aBeanData.getCtluse()); 
-        		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
+//        		aBeanData = ctlsiiService.findOne(keyBean);
+        		aResults = aSql.getResultList();
+        		aEstado = (String)aResults.get(0);
+        			
+        		LOGGER.log(Level.INFO, "aBeanData use value " + aEstado); 
+//        		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
+        		if(aBeanData != null && FIN.equals(aEstado)){
         			intents=0;
         			LOGGER.log(Level.INFO, "Procesando fichero xml, intento(s) " + intents);
         			envioSiiService.procesarFicheroYGuardarResultado(getPathfiles()+"SII_"+aNumPro+".xml",aKeys,tmpModo);
