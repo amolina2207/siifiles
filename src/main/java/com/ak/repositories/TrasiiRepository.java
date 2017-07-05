@@ -1,15 +1,12 @@
 package com.ak.repositories;
 
-import com.ak.models.TrasiiBean;
-import com.ak.models.TrasiiKey;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.ak.models.TrasiiBean;
+import com.ak.models.TrasiiKey;
 
 /**
  * Created by amolina on 22/05/17.

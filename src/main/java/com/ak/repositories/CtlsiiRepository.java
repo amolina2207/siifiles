@@ -1,13 +1,10 @@
 package com.ak.repositories;
 
-import com.ak.models.CtlsiiBean;
-import com.ak.models.CtlsiiKey;
-import com.ak.models.TrasiiBean;
-import com.ak.models.TrasiiKey;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.ak.models.CtlsiiBean;
+import com.ak.models.CtlsiiKey;
 
 /**
  * Created by amolina on 22/05/17.

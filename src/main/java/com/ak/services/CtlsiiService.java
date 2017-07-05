@@ -1,15 +1,11 @@
 package com.ak.services;
 
-import com.ak.models.CtlsiiBean;
-import com.ak.models.TrasiiBean;
-import com.ak.models.TrasiiKey;
-import com.ak.repositories.CtlsiiRepository;
-import com.ak.repositories.TrasiiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.ak.models.CtlsiiBean;
+import com.ak.models.CtlsiiKey;
+import com.ak.repositories.CtlsiiRepository;
 
 /**
  * Created by amolina on 22/05/17.
@@ -23,6 +19,10 @@ public class CtlsiiService {
     public CtlsiiBean save(CtlsiiBean data){
         return repository.save(data);
     }
-
+    
+    public CtlsiiBean findOne(CtlsiiKey aKey){
+    	return repository.findOne(aKey);
+    }
+    
 
 }

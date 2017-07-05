@@ -59,23 +59,23 @@ public class EnvioSiiService {
     	}else{
     		LOGGER.log(Level.INFO, "Processing: " + aPath);
 	        newBuffer();
-	        File tmpFile = new File(aPath);
-	        boolean existsOrReady = false;
-	        int intents = 0;
-	        while(!existsOrReady && intents < 3){
-	        	existsOrReady = tmpFile.exists();
-	        	if(!existsOrReady){
-	        		try {
-	        			LOGGER.log(Level.INFO, "File not available yet");
-	        			TimeUnit.SECONDS.sleep(4);
-	        			intents++;
-	        		} catch (InterruptedException e) {
-	        			e.printStackTrace();
-	        		}
-	        	}else{
-	        		LOGGER.log(Level.INFO, "File ready to be read");
-	        	}
-	        }
+//	        File tmpFile = new File(aPath);
+//	        boolean existsOrReady = false;
+//	        int intents = 0;
+//	        while(!existsOrReady && intents < 3){
+//	        	existsOrReady = tmpFile.exists();
+//	        	if(!existsOrReady){
+//	        		try {
+//	        			LOGGER.log(Level.INFO, "File not available yet");
+//	        			TimeUnit.SECONDS.sleep(4);
+//	        			intents++;
+//	        		} catch (InterruptedException e) {
+//	        			e.printStackTrace();
+//	        		}
+//	        	}else{
+//	        		LOGGER.log(Level.INFO, "File ready to be read");
+//	        	}
+//	        }
 	        try(Stream<String> stream = Files.lines(Paths.get(aPath))) {	
 	            stream.forEach((line)->addStringToBuffer(line));
 	        }catch(Exception e){

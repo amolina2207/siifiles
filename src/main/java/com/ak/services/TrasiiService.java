@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ import com.ak.repositories.TrasiiRepository;
 public class TrasiiService {
 
 	private static final int SEGUNDOS_POR_FACTURA = 2;
-	
+	private static final String FIN = "FIN";
 	private static final Logger LOGGER = Logger.getLogger(EnvioSiiService.class.getName());
 	
 	@Value("${siiprops.pathfiles}")
@@ -36,6 +38,9 @@ public class TrasiiService {
     
     @Autowired
     private EnvioSiiService envioSiiService;
+    
+    @Autowired
+    private EntityManager entityManager;
     
     @Autowired
     private TrasiiRepository repository;
@@ -82,14 +87,27 @@ public class TrasiiService {
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
         ctlsiiService.save(ctlBean);
-        try {
-            // Bloqueo 5 segundos para que el proceso RPG cree el XML
-        	LOGGER.log(Level.INFO, "Waiting (aKeys.size() = " + aKeys.size() + " " + (int)Math.round(aKeys.size()*SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
-			TimeUnit.SECONDS.sleep(((int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA) + SEGUNDOS_POR_FACTURA));
-		} catch (InterruptedException e) {
+        entityManager.clear();
+        int intents = -5;
+        CtlsiiBean aBeanData = null;
+        try{
+        	while(intents<0){
+        		aBeanData = ctlsiiService.findOne(keyBean);
+        		if(aBeanData != null && FIN.equals(aBeanData.getCtluse().trim())){
+        			intents=0;
+        			LOGGER.log(Level.INFO, "Procesando fichero xml, intento(s) " + intents);
+        			envioSiiService.procesarFicheroYGuardarResultado(getPathfiles()+"SII_"+aNumPro+".xml",aKeys,tmpModo);
+        		}else{
+        			intents++;
+        			TimeUnit.SECONDS.sleep(5);
+        		}
+        	}
+		}catch(InterruptedException e){
 			e.printStackTrace();
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
-        envioSiiService.procesarFicheroYGuardarResultado(getPathfiles()+"SII_"+aNumPro+".xml",aKeys,tmpModo);
+        if(intents==0){ LOGGER.log(Level.INFO, "El fichero se ha procesado"); }
     }
     
     public TrasiiBean findById(String compaak,String empresa,BigDecimal ejercio,String periodo,String eminif,String facnum,String facfec,String facter) {
