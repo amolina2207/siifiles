@@ -93,6 +93,7 @@ public class EnvioSiiService {
     }
     
     private synchronized TreeMap<String,ResultFactura> callAndReceive(String aXml, TreeMap<String, TrasiiKey> aKeys, String aModo) throws Exception {
+    	LOGGER.log(Level.INFO, "Executing callAndReceive method with params ["+aXml+","+aModo+"]");
     	getXmlFromFile(aXml);
     	TreeMap<String,ResultFactura> results = new TreeMap<String,ResultFactura>();
 //        for(String elem : aKeys.keySet()){ results.put(elem.trim(), null); }
