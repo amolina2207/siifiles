@@ -13,7 +13,6 @@ import java.util.function.Function;
 
 @Entity(name = "Trasii")
 @Table(name="TRASII")
-@Cacheable(false)
 public class TrasiiBean implements Serializable {
 	
 	private static final String KEY_SEPARATOR = "||";

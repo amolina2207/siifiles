@@ -16,7 +16,6 @@ import javax.persistence.Table;
 
 @Entity(name = "Ctlsii")
 @Table(name="CTLSII")
-@Cacheable(false)
 public class CtlsiiBean implements Serializable {
 
     @EmbeddedId

@@ -18,6 +18,7 @@ import com.ak.models.CtlsiiBean;
 import com.ak.models.CtlsiiKey;
 import com.ak.models.TrasiiBean;
 import com.ak.models.TrasiiKey;
+import com.ak.repositories.CtlsiiDao;
 import com.ak.repositories.TrasiiRepository;
 
 /**
@@ -35,6 +36,9 @@ public class TrasiiService {
 	
     @Autowired
     private CtlsiiService ctlsiiService;
+    
+    @Autowired
+    private CtlsiiDao aDaoCtl;
     
     @Autowired
     private EnvioSiiService envioSiiService;
@@ -87,8 +91,10 @@ public class TrasiiService {
         ctlBean.setCtlhcr();
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
-        ctlsiiService.save(ctlBean);
-        entityManager.clear();
+//        ctlsiiService.save(ctlBean);
+//        entityManager.persist(ctlBean);
+        aDaoCtl.create(ctlBean);
+//        entityManager.clear();
         int intents = -5;
         CtlsiiBean aBeanData = null;
         try{
