@@ -1,8 +1,10 @@
 package com.ak.models;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.PostLoad;
 
 /**
  * Created by amolina on 22/05/17.
@@ -25,7 +27,7 @@ public class TrasiiKey implements Serializable{
     private String facfec;
     @Column(name = "FACTER")
     private String facter;
-
+    
     @Override
 	public int hashCode() {
 		final int prime = 31;

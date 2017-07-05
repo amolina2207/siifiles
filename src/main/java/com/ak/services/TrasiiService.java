@@ -24,7 +24,7 @@ import com.ak.repositories.TrasiiRepository;
 @Service
 public class TrasiiService {
 
-	private static final int SEGUNDOS_POR_FACTURA = 5;
+	private static final int SEGUNDOS_POR_FACTURA = 2;
 	
 	private static final Logger LOGGER = Logger.getLogger(EnvioSiiService.class.getName());
 	
@@ -50,6 +50,10 @@ public class TrasiiService {
         CtlsiiBean ctlBean;
         CtlsiiKey keyBean;
         String tmpCompany = null, tmpEmpresa = null, tmpModo = null;
+        
+//        // TODO: Provisional
+//        repository.fixForTrasiiFacnumWithBlanks();
+        
         // Marco todos los registros seleccionados con un numero de proceso
         for(TrasiiKey inKey : aKeys.values()) {
             inBean = repository.findOne(inKey);
@@ -80,7 +84,7 @@ public class TrasiiService {
         ctlsiiService.save(ctlBean);
         try {
             // Bloqueo 5 segundos para que el proceso RPG cree el XML
-        	LOGGER.log(Level.INFO, "Waiting " + (int)Math.round(aKeys.size()*SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
+        	LOGGER.log(Level.INFO, "Waiting (aKeys.size() = " + aKeys.size() + " " + (int)Math.round(aKeys.size()*SEGUNDOS_POR_FACTURA) + " for the xml to complete.");
 			TimeUnit.SECONDS.sleep(((int)Math.ceil(aKeys.size()/SEGUNDOS_POR_FACTURA) + SEGUNDOS_POR_FACTURA));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -89,6 +93,10 @@ public class TrasiiService {
     }
     
     public TrasiiBean findById(String compaak,String empresa,BigDecimal ejercio,String periodo,String eminif,String facnum,String facfec,String facter) {
+    	
+//    	// TODO: Provisional
+//        repository.fixForTrasiiFacnumWithBlanks();
+    	
         TrasiiKey tmpKey = new TrasiiKey();
         tmpKey.setCompaak(compaak);
         tmpKey.setEmpresa(empresa);
@@ -102,6 +110,10 @@ public class TrasiiService {
     }
 
     public TrasiiBean findOne(TrasiiKey tmpKey){
+    	
+//    	// TODO: Provisional
+//        repository.fixForTrasiiFacnumWithBlanks();
+    	
         return repository.findOne(tmpKey);
     }
 

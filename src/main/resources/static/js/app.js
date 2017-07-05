@@ -187,8 +187,8 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                             $scope.errorMessage = '';
                             $scope.isRowSelected = [];
                             setOfKeys.clear();
-                            $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
                             $scope.modo = ""; // Reseteamos el control de modo
+                            $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
                     },
                     function error(response) {
                         $scope.message = '';

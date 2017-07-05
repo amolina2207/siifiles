@@ -2,12 +2,13 @@ package com.ak.services;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -51,19 +52,40 @@ public class EnvioSiiService {
         sb.append(aLine);
     }
 	
-    private synchronized void getXmlFromFile(String aPath) throws IOException{
+    private synchronized void getXmlFromFile(String aPath) throws Exception{
     	Assert.assertNotNull(aPath);
     	if(aPath.equals("")){
     		LOGGER.log(Level.SEVERE, "File path empty !!!");
     	}else{
 	        newBuffer();
-	        try(Stream<String> stream = Files.lines(Paths.get(aPath))) {
+	        File tmpFile = new File(aPath);
+	        boolean existsOrReady = false;
+	        int intents = 0;
+	        while(!existsOrReady || intents < 3){
+	        	existsOrReady = tmpFile.exists();
+	        	if(!existsOrReady){
+	        		try {
+	        			LOGGER.log(Level.INFO, "File not available yet");
+	        			TimeUnit.SECONDS.sleep(4);
+	        			intents++;
+	        		} catch (InterruptedException e) {
+	        			e.printStackTrace();
+	        		}
+	        	}else{
+	        		LOGGER.log(Level.INFO, "File ready to be read");
+	        	}
+	        }
+	        try(Stream<String> stream = Files.lines(Paths.get(aPath))) {	
 	            stream.forEach((line)->addStringToBuffer(line));
 	        }catch(Exception e){
 	        	LOGGER.log(Level.SEVERE, "ERROR : Loading file");
-	        	throw new IOException();
+	        	e.printStackTrace();
 	        }
-	        LOGGER.log(Level.INFO, "File Loaded");
+	        if(sb.toString().length()>0){
+	        	LOGGER.log(Level.INFO, "File Loaded");
+	        }else{
+	        	LOGGER.log(Level.SEVERE, "File NOT loaded");
+	        }
     	}
     }
     
@@ -157,6 +179,10 @@ public class EnvioSiiService {
 			if(aResults.size() != aKeys.size()){ LOGGER.log(Level.SEVERE, "No se han recibidos respuestas de todas las facturas enviadas !!!"); throw new Exception(); }
 			TrasiiBean aBean = null;
 			ResultFactura aResultF = null;
+			
+//	        // TODO: Provisional
+//	        trasiiRepository.fixForTrasiiFacnumWithBlanks();
+			
 			for(TrasiiKey aKey : aKeys.values()){
 				aBean = trasiiRepository.findOne(aKey);
 				if(aBean != null){

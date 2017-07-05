@@ -17,22 +17,8 @@ import java.util.List;
 @Repository
 public interface TrasiiRepository extends CrudRepository<TrasiiBean, TrasiiKey> {
     List<TrasiiBean> findAll();
-
-    // Numero de proceso
-    /*@Modifying
-    @Query("update trasii set resdes = :numeroProceso where compaak = :compaak and ejercio = :ejercio and periodo = :periodo and eminif = :eminif and facnum = :facnum and facfec = :facfec and facter = :facter")
-    int setResdesForTrasii(@Param("compaak") String compaak,
-                                  @Param("empresa") String empresa,
-                                  @Param("ejercio") BigDecimal ejercio,
-                                  @Param("periodo") String periodo,
-                                  @Param("eminif") String eminif,
-                                  @Param("facnum") String facnum,
-                                  @Param("facfec") String facfec,
-                                  @Param("facter") String facter,
-                                  @Param("numeroProceso") String numeroProceso);*/
-
-
-
-
+    
+//    @Query("UPDATE TRASII A SET FACNUM = TRIM(A.FACNUM) WHERE RESCSV = '' ")
+//    void fixForTrasiiFacnumWithBlanks();
 
 }
