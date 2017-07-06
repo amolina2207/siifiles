@@ -9,7 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +53,7 @@ public class TrasiiService {
         return tmpResult;
     }
 
+    
     public void procesarRegistros(TreeMap<String,TrasiiKey> aKeys, BigDecimal aNumPro) throws Exception{
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
@@ -89,13 +92,14 @@ public class TrasiiService {
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
 //        ctlsiiService.save(ctlBean);
-        
-        javax.persistence.Query aSqlInsert = entityManager.createNativeQuery(" INSERT INTO CTLSII (COMPAAK, EMPRESA, CTLPRO, CTLRUT, CTLUSE, CTLFCR, CTLHCR) VALUES ('"+tmpCompany+"', '"+tmpEmpresa+"', , '"+aNumPro+"', 'WEB', CURRENT DATE, CURRENT TIME) ");
+        EntityManagerFactory factory = entityManager.getEntityManagerFactory();
+        EntityManager em2 = factory.createEntityManager();
+        em2.getTransaction().begin();
+        javax.persistence.Query aSqlInsert = em2.createNativeQuery("INSERT INTO CTLSII (COMPAAK, EMPRESA, CTLPRO, CTLRUT, CTLUSE, CTLFCR, CTLHCR) VALUES ('"+tmpCompany+"', '"+tmpEmpresa+"', '"+aNumPro+"', '', 'WEB', CURRENT DATE, CURRENT TIME)");
         aSqlInsert.executeUpdate();
-        
+        em2.getTransaction().commit();
         int intents = -5;
         CtlsiiBean aBeanData = null;
-        
         javax.persistence.Query aSql = entityManager.createNativeQuery("SELECT CTLUSE FROM CTLSII WHERE COMPAAK='"+tmpCompany+"' AND EMPRESA='"+tmpEmpresa+"' AND CTLPRO='"+aNumPro+"'");
         List<String> aResults;
         String aEstado = null;
