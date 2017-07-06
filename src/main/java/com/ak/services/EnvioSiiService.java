@@ -198,7 +198,9 @@ public class EnvioSiiService {
 					aBean.setReshor(new java.sql.Time(new Date().getTime()));
 	//				aBean.setResemi("");
 	//				aBean.setResfac("");
-					// TODO :: Hablar con Manel para que haga este campo un poco mas grande
+					if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
+						aBean.setRescsv("");
+					}
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
 					trasiiRepository.save(aBean);
 					entityManager.clear();

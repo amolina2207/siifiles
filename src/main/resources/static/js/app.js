@@ -130,15 +130,16 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         $scope.selectAll = function(){
         	setOfKeys.clear();
     		$scope.modo = "";
-    		var keyRow = "";
+    		//var keyRow = "";
     		$scope.isRowSelected = [];
         	if($scope.allSelected == false){
         		angular.forEach($scope.itemsToShow, (item) => {
             		if($scope.modo == "") $scope.modo = $scope.trasiisfilter.id.facter;
             		if($scope.modo == item.id.facter && item.rescsv.trim() == ""){
-            			keyRow = item.id.compaak.trim().concat("||").concat(item.id.empresa.trim()).concat("||").concat(item.id.ejercio).concat("||").concat(item.id.periodo.trim()).concat("||").concat(item.id.eminif.trim()).concat("||").concat(item.id.facnum.trim()).concat("||").concat(item.id.facfec.trim()).concat("||").concat(item.id.facter.trim());
-            			$scope.isRowSelected[keyRow] = true;
-            			setOfKeys.add(keyRow);
+            			//keyRow = item.id.compaak.trim().concat("||").concat(item.id.empresa.trim()).concat("||").concat(item.id.ejercio).concat("||").concat(item.id.periodo.trim()).concat("||").concat(item.id.eminif.trim()).concat("||").concat(item.id.facnum.trim()).concat("||").concat(item.id.facfec.trim()).concat("||").concat(item.id.facter.trim());
+            			console.log("item.keySelectedRow => " + item.keySelectedRow);
+            			$scope.isRowSelected[item.keySelectedRow] = true;
+            			setOfKeys.add(item.keySelectedRow);
             		}
             	});
         	}
@@ -147,23 +148,25 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         };
         
         $scope.setSelected = function(tra) {
+        	$log.log('Removing one element => ' + tra);
+        	console.log(tra);
         	if(tra.rescsv.trim() !== ""){
         		$scope.errorMessage = 'No se pueden seleccionar registros ya procesados [CSV].';
         	}else{
 	        	if($scope.modo === undefined || $scope.modo == "" || $scope.modo == tra.id.facter ){
-	        		var keyRow = tra.id.compaak.trim().concat("||").concat(tra.id.empresa.trim()).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo.trim()).concat("||").concat(tra.id.eminif.trim()).concat("||").concat(tra.id.facnum.trim()).concat("||").concat(tra.id.facfec.trim()).concat("||").concat(tra.id.facter.trim());
+	        		// var keyRow = tra.id.compaak.trim().concat("||").concat(tra.id.empresa.trim()).concat("||").concat(tra.id.ejercio).concat("||").concat(tra.id.periodo.trim()).concat("||").concat(tra.id.eminif.trim()).concat("||").concat(tra.id.facnum.trim()).concat("||").concat(tra.id.facfec.trim()).concat("||").concat(tra.id.facter.trim());
 	        		$scope.errorMessage = '';
 	        		$scope.modo = tra.id.facter;
-	        		$scope.isRowSelected[keyRow] = ( $scope.isRowSelected[keyRow] === undefined || $scope.isRowSelected[keyRow] === false ) ? true : false;
+	        		$scope.isRowSelected[tra.keySelectedRow] = ( $scope.isRowSelected[tra.keySelectedRow] === undefined || $scope.isRowSelected[tra.keySelectedRow] === false ) ? true : false;
 	                
-	                if(setOfKeys.contains(keyRow)){
-	                	$log.log('Removing one element => ' + keyRow);
-	                    setOfKeys.remove(keyRow);
+	                if(setOfKeys.contains(tra.keySelectedRow)){
+	                	$log.log('Removing one element => ' + tra.keySelectedRow);
+	                    setOfKeys.remove(tra.keySelectedRow);
 	                    if(setOfKeys.values().length == 0){
 	                    	$scope.modo = ""; // Reseteamos el control de modo, unicamente si la hash esta vacia.
 	                    }
 	                }else{
-	                    setOfKeys.add(keyRow);
+	                    setOfKeys.add(tra.keySelectedRow);
 	                }
 	                console.log(setOfKeys.values());
 	                

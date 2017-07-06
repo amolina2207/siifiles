@@ -83,6 +83,7 @@ public class TrasiiController {
 //            }
 //        }
         List<TrasiiBean> tmpResult = trassiService.findAll();
+        tmpResult.forEach(aBean -> aBean.setKeySelectedRow());
         return tmpResult;
     }
 
