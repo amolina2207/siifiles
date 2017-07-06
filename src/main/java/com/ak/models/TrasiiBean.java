@@ -865,6 +865,13 @@ public class TrasiiBean implements Serializable {
     public void setEmihcr(){
     	this.setEmihcr(new java.sql.Time(new java.util.Date().getTime()));
     }
+    public void setResfer(){
+    	this.setResfer(new java.sql.Date(new java.util.Date().getTime()));
+    }
+    public void setReshor(){
+    	this.setReshor(new java.sql.Time(new java.util.Date().getTime()));
+    }
+    
     
 	public String getKeySelectedRow() {
 		return keySelectedRow;
