@@ -79,7 +79,7 @@ public class TrasiiService {
             em3.getTransaction().begin();
             
             String tmpSaveInSQL = " UPDATE TRASII "
-        	+ " SET EMIPRO = " + aNumPro + ", EMIFTR = CURRENT DATE, RESFER = CURRENT TIME "
+        	+ " SET EMIPRO = " + aNumPro + ", EMIFTR = CURRENT DATE, RESFER = CURRENT DATE "
         	+ " WHERE " 
         	+ " COMPAAK='"+inBean.getId().getCompaak()+"' "
         	+ " AND EMPRESA='"+inBean.getId().getEmpresa()+"' " 
