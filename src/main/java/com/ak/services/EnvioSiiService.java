@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
@@ -36,9 +38,9 @@ public class EnvioSiiService {
 	@Autowired
 	private TrasiiRepository trasiiRepository;
 	
-	@Autowired
-    private EntityManager entityManager;
-	
+	 @PersistenceContext
+	private EntityManager entityManager;
+    
 	@Autowired
 	private WSProps wsprops;
 	
@@ -159,7 +161,7 @@ public class EnvioSiiService {
 								// resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
 								if(tmpElementRL.getValue().equalsIgnoreCase("Incorrecto")){
-									 resultFactura.setCsv(tmpTopCSV);
+									 resultFactura.setCsv("");
 								}
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
@@ -198,11 +200,33 @@ public class EnvioSiiService {
 					aBean.setReshor(new java.sql.Time(new Date().getTime()));
 	//				aBean.setResemi("");
 	//				aBean.setResfac("");
-					if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
-						aBean.setRescsv("");
-					}
+//					if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
+//						aBean.setRescsv("");
+//					}
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
-					trasiiRepository.save(aBean);
+//					trasiiRepository.save(aBean);
+					EntityManagerFactory factory2 = entityManager.getEntityManagerFactory();
+		            EntityManager em3 = factory2.createEntityManager();
+		            em3.getTransaction().begin();
+		            String tmpCSV = aResultF.getCsv();
+		            if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
+		            	tmpCSV = "";
+		            }
+		            String tmpSaveInSQL = " UPDATE TRASII "
+		        	+ " SET RESCSV = '"+tmpCSV+"', RESERR = '"+aResultF.getErrorCode()+"', RESDES = '"+aResultF.getErrorDesc()+"', " 
+		        	+ " RESFER = CURRENT DATE, RESHOR = CURRENT TIME, RESFAC = '"+aBean.getResfac()+"' "
+		        	+ " WHERE " 
+		        	+ " COMPAAK='"+aBean.getId().getCompaak()+"' "
+		        	+ " AND EMPRESA='"+aBean.getId().getEmpresa()+"' " 
+		        	+ " AND EJERCIO = " + aBean.getId().getEjercio() 
+		        	+ " AND PERIODO='"+aBean.getId().getPeriodo()+"' "
+		        	+ " AND EMINIF='"+aBean.getId().getEminif()+"' "
+		        	+ " AND FACNUM='"+aBean.getId().getFacnum()+"' "
+		        	+ " AND FACFEC='"+aBean.getId().getFacfec()+"' " 
+		        	+ " AND FACTER='"+aBean.getId().getFacter()+"' ";
+		            javax.persistence.Query aSqlUpdate = em3.createNativeQuery(tmpSaveInSQL);
+		            aSqlUpdate.executeUpdate();
+		            em3.getTransaction().commit();
 				}else{
 					LOGGER.log(Level.SEVERE, "Registro del TRASII imposible de recuperar, por lo tanto el resultado no se puede guardar " + aResultF);
 				}
