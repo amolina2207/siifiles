@@ -55,6 +55,7 @@ public class TrasiiService {
 
     
     public void procesarRegistros(TreeMap<String,TrasiiKey> aKeys, BigDecimal aNumPro) throws Exception{
+    	LOGGER.log(Level.INFO, " NUMERO DE PROCESO ========> " + aNumPro);
         TrasiiBean inBean;
         CtlsiiBean ctlBean;
         CtlsiiKey keyBean;
