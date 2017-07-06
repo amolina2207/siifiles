@@ -88,7 +88,11 @@ public class TrasiiService {
         ctlBean.setCtlhcr();
         ctlBean.setCtlrut("");
         ctlBean.setCtluse("WEB");
-        ctlsiiService.save(ctlBean);
+//        ctlsiiService.save(ctlBean);
+        
+        javax.persistence.Query aSqlInsert = entityManager.createNativeQuery(" INSERT INTO CTLSII (COMPAAK, EMPRESA, CTLPRO, CTLRUT, CTLUSE, CTLFCR, CTLHCR) VALUES ('"+tmpCompany+"', '"+tmpEmpresa+"', , '"+aNumPro+"', 'WEB', CURRENT DATE, CURRENT TIME) ");
+        aSqlInsert.executeUpdate();
+        
         int intents = -5;
         CtlsiiBean aBeanData = null;
         
