@@ -1,11 +1,17 @@
 package com.ak.models;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.function.Function;
+
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by amolina on 19/05/17.
@@ -13,6 +19,7 @@ import java.util.function.Function;
 
 @Entity(name = "Trasii")
 @Table(name="TRASII")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TrasiiBean implements Serializable {
 	
 	private static final String KEY_SEPARATOR = "||";
@@ -840,18 +847,17 @@ public class TrasiiBean implements Serializable {
         this.id = id;
     }
     
-    @Transient
-    Function<TrasiiBean, TrasiiBean> setAttributeToBean = new Function<TrasiiBean, TrasiiBean>(){
-    	@Override
-    	public TrasiiBean apply(TrasiiBean aTra){
-    		aTra.setKeySelectedRow();
-    		return aTra;
-    	}
-	};
-
-	public Function<TrasiiBean, TrasiiBean> getSetAttributeToBean() {
-		return setAttributeToBean;
-	}
+//    @Transient
+//    Function<TrasiiBean, TrasiiBean> setAttributeToBean = new Function<TrasiiBean, TrasiiBean>(){
+//    	@Override
+//    	public TrasiiBean apply(TrasiiBean aTra){
+//    		aTra.setKeySelectedRow();
+//    		return aTra;
+//    	}
+//	};
+//	public Function<TrasiiBean, TrasiiBean> getSetAttributeToBean() {
+//		return setAttributeToBean;
+//	}
 
 	public String getKeySelectedRow() {
 		return keySelectedRow;

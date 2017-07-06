@@ -130,7 +130,7 @@ public class EnvioSiiService {
 			try {
 				tmpPart = (SOAPElement) tmpParts.next();
 			} catch (java.lang.ClassCastException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.INFO, "ClassCastException it is not necesary to print, we know it");
 				break;
 			}
 			java.util.Iterator<?> items = tmpPart.getChildElements();
