@@ -238,7 +238,7 @@ public class TrasiiBean implements Serializable {
 
     @Column(name = "EMIFTR")
     private java.sql.Date emiftr;
-
+    
     @Column(name = "EMIHTR")
     private java.sql.Time emihtr;
 
@@ -859,6 +859,13 @@ public class TrasiiBean implements Serializable {
 //		return setAttributeToBean;
 //	}
 
+    public void setEmiftr(){
+    	this.setEmiftr(new java.sql.Date(new java.util.Date().getTime()));
+    }
+    public void setEmihcr(){
+    	this.setEmihcr(new java.sql.Time(new java.util.Date().getTime()));
+    }
+    
 	public String getKeySelectedRow() {
 		return keySelectedRow;
 	}

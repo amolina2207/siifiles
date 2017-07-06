@@ -175,8 +175,9 @@ public class TrasiiService {
     }
 
     public TrasiiBean save(TrasiiBean data){
+    	data.setEmiftr();
+    	data.setEmihcr();
     	TrasiiBean aResult = repository.save(data);
-    	entityManager.clear();
         return aResult;
     }
 
