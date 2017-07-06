@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class CountersUtils {
     public static BigDecimal randomIdGenerator(){
-    	DateFormat df = new SimpleDateFormat("yyMMddHHMM"); // Just the year, with 2 digits
+    	DateFormat df = new SimpleDateFormat("yyMMddHHmm"); // Just the year, with 2 digits
     	String formattedDate = df.format(Calendar.getInstance().getTime());
     	return new BigDecimal(formattedDate);
     }
