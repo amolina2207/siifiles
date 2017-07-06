@@ -72,8 +72,27 @@ public class TrasiiService {
             inBean.setResfer(new java.sql.Date(new Date().getTime()));
             
             inBean.setEmipro(aNumPro);
-            repository.save(inBean);
-            entityManager.clear();
+            
+            EntityManagerFactory factory2 = entityManager.getEntityManagerFactory();
+            EntityManager em3 = factory2.createEntityManager();
+            em3.getTransaction().begin();
+            
+            String tmpSaveInSQL = " UPDATE TRASII "
+        	+ " SET EMIPRO = " + aNumPro
+        	+ " WHERE " 
+        	+ " COMPAAK='"+inBean.getId().getCompaak()+"' "
+        	+ " AND EMPRESA='"+inBean.getId().getEmpresa()+"' " 
+        	+ " AND EJERCIO = " + inBean.getId().getEjercio() 
+        	+ " AND PERIODO='"+inBean.getId().getPeriodo()+"' "
+        	+ " AND EMINIF='"+inBean.getId().getEminif()+"' "
+        	+ " AND FACNUM='"+inBean.getId().getFacnum()+"' "
+        	+ " AND FACFEC='"+inBean.getId().getFacfec()+"' " 
+        	+ " AND FACTER='"+inBean.getId().getFacter()+"' ";
+            javax.persistence.Query aSqlUpdate = em3.createNativeQuery(tmpSaveInSQL);
+            aSqlUpdate.executeUpdate();
+            em3.getTransaction().commit();
+            
+//            repository.save(inBean);
             if(tmpCompany == null){
             	tmpCompany = inKey.getCompaak();
             	tmpEmpresa = inKey.getEmpresa();
