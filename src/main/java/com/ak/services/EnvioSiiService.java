@@ -160,9 +160,9 @@ public class EnvioSiiService {
 							} else if (tmpElementRL.getLocalName().equals("CSV")) {
 								// resultFactura.setCsv(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("EstadoRegistro")) {
-								if(tmpElementRL.getValue().equalsIgnoreCase("Incorrecto")){
+								/*if(tmpElementRL.getValue().equalsIgnoreCase("Incorrecto")){
 									 resultFactura.setCsv("");
-								}
+								}*/
 								resultFactura.setEstadoRegistro(tmpElementRL.getValue());
 							} else if (tmpElementRL.getLocalName().equals("CodigoErrorRegistro")) {
 								resultFactura.setErrorCode(tmpElementRL.getValue());
@@ -198,22 +198,18 @@ public class EnvioSiiService {
 					aBean.setResdes(aResultF.getErrorDesc());
 					aBean.setResfer(new java.sql.Date(new Date().getTime()));
 					aBean.setReshor(new java.sql.Time(new Date().getTime()));
-	//				aBean.setResemi("");
-	//				aBean.setResfac("");
-//					if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
-//						aBean.setRescsv("");
-//					}
+
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
 //					trasiiRepository.save(aBean);
 					EntityManagerFactory factory2 = entityManager.getEntityManagerFactory();
 		            EntityManager em3 = factory2.createEntityManager();
 		            em3.getTransaction().begin();
-		            String tmpCSV = aResultF.getCsv();
-		            /*if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
-		            	tmpCSV = "";
-		            }*/
+		            String tmpActualizarCSV = " RESCSV = '" + aResultF.getCsv() + "', ";
+		            if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
+						tmpActualizarCSV = "";
+		            }
 		            String tmpSaveInSQL = " UPDATE TRASII "
-		        	+ " SET RESCSV = '"+tmpCSV+"', RESERR = '"+aResultF.getErrorCode()+"', RESDES = '"+aResultF.getErrorDesc()+"', " 
+		        	+ " SET " + tmpActualizarCSV + " RESERR = '"+aResultF.getErrorCode()+"', RESDES = '"+aResultF.getErrorDesc()+"', "
 		        	+ " RESFER = CURRENT DATE, RESHOR = CURRENT TIME, RESFAC = '"+aBean.getResfac()+"' "
 		        	+ " WHERE " 
 		        	+ " COMPAAK='"+aBean.getId().getCompaak()+"' "
