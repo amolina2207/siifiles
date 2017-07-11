@@ -97,12 +97,10 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         $scope.csvSwitch = $scope.states[0];
         
         $scope.init = function () {
-           $log.log('init function executed');
            $scope.getAllTrasii();  
         }
         
         $scope.swichState = function(){
-        	$log.log('swichState function executed ' + $scope.itemsToShow.length);
         	$scope.itemsToShow = [];
         	var data = [];
         	var onlyPendientes = $scope.csvSwitch.id == "P";
@@ -136,7 +134,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         		angular.forEach($scope.itemsToShow, (item) => {
             		if($scope.modo == "") $scope.modo = $scope.trasiisfilter.id.facter;
             		if($scope.modo == item.id.facter && item.rescsv.trim() == ""){
-            			//keyRow = item.id.compaak.trim().concat("||").concat(item.id.empresa.trim()).concat("||").concat(item.id.ejercio).concat("||").concat(item.id.periodo.trim()).concat("||").concat(item.id.eminif.trim()).concat("||").concat(item.id.facnum.trim()).concat("||").concat(item.id.facfec.trim()).concat("||").concat(item.id.facter.trim());
             			console.log("item.keySelectedRow => " + item.keySelectedRow);
             			$scope.isRowSelected[item.keySelectedRow] = true;
             			setOfKeys.add(item.keySelectedRow);
@@ -148,7 +145,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
         };
         
         $scope.setSelected = function(tra) {
-        	$log.log('Removing one element => ' + tra);
         	console.log(tra);
         	if(tra.rescsv.trim() !== ""){
         		$scope.errorMessage = 'No se pueden seleccionar registros ya procesados [CSV].';
@@ -160,7 +156,6 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
 	        		$scope.isRowSelected[tra.keySelectedRow] = ( $scope.isRowSelected[tra.keySelectedRow] === undefined || $scope.isRowSelected[tra.keySelectedRow] === false ) ? true : false;
 	                
 	                if(setOfKeys.contains(tra.keySelectedRow)){
-	                	$log.log('Removing one element => ' + tra.keySelectedRow);
 	                    setOfKeys.remove(tra.keySelectedRow);
 	                    if(setOfKeys.values().length == 0){
 	                    	$scope.modo = ""; // Reseteamos el control de modo, unicamente si la hash esta vacia.
@@ -191,7 +186,11 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                             $scope.isRowSelected = [];
                             setOfKeys.clear();
                             $scope.modo = ""; // Reseteamos el control de modo
-                            $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit); 
+                            $scope.noOfPages = Math.ceil($scope.itemsToShow.length/$scope.entryLimit);
+                            
+                            $scope.csvSwitch.id = "P";
+                            $scope.swichState();
+                            
                     },
                     function error(response) {
                         $scope.message = '';
@@ -304,7 +303,11 @@ app.controller('TrasiiCRUDCtrl', ['$scope','TrasiiCRUDService', '$uibModal', '$l
                         $scope.message = '';
                     });
         };
-
+        
+        $scope.isEmpty = function(value){
+        	if(value.trim()) return false; else return true;
+        };
+        
         /*
         $scope.addTrasii = function () {
             if ($scope.trasii2 != null && $scope.trasii2.compaak && $scope.trasii2.empresa && $scope.trasii2.ejercio && $scope.trasii2.periodo

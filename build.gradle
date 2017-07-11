@@ -31,4 +31,5 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '1.5.3.RELEASE'
     compile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }

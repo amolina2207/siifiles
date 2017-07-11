@@ -167,13 +167,11 @@
                             <td>{{ tra.id.empresa }}</td>
                             <td>{{ tra.id.ejercio }}</td>
                             <td>{{ tra.id.periodo }}</td>
-                            <td>{{ tra.facnif }}</td>
+                            <td ng-if="!isEmpty(tra.facnif)">{{tra.facnif}}</td>
+                            <td ng-if="isEmpty(tra.facnif)">{{tra.facidc}}</td>
                             <td>{{ tra.facnom }}</td>
                             <td>{{ tra.id.facnum }}</td>
-<!--                             <td>{{ tra.id.facfec }}</td> -->
                             <td>{{ tra.id.facter }}</td>
-<!--                             <td>{{ tra.empcif }}</td> -->
-<!--                             <td>{{ tra.repcif }}</td> -->
                             <td>{{ tra.tipocom }}</td>
                             <td>{{ tra.factip }}</td>
 							<td>{{ tra.rescsv }}</td>

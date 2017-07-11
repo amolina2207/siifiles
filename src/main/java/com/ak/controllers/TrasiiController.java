@@ -34,9 +34,7 @@ public class TrasiiController {
 
     @Autowired
     private TrasiiService trassiService;
-
-
-
+    
     @RequestMapping(value = "/trasii", method = RequestMethod.GET, produces = {"application/json"})
     public List<TrasiiBean> findAll(){
         List<TrasiiBean> tmpResult = trassiService.findAll();
@@ -46,7 +44,6 @@ public class TrasiiController {
 
     @RequestMapping(value = "/trasii/procesar", method = RequestMethod.POST, produces = {"application/json"})
     public List<TrasiiBean> procesarRegistros(@RequestBody KeyAsString registros) {
-    	
     	// Pretty Java 8 way
     	Optional<KeyAsString> optionalKeys = Optional.ofNullable(registros);
     	if(optionalKeys.isPresent()){

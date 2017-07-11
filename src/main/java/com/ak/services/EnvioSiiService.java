@@ -209,9 +209,9 @@ public class EnvioSiiService {
 		            EntityManager em3 = factory2.createEntityManager();
 		            em3.getTransaction().begin();
 		            String tmpCSV = aResultF.getCsv();
-		            if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
+		            /*if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
 		            	tmpCSV = "";
-		            }
+		            }*/
 		            String tmpSaveInSQL = " UPDATE TRASII "
 		        	+ " SET RESCSV = '"+tmpCSV+"', RESERR = '"+aResultF.getErrorCode()+"', RESDES = '"+aResultF.getErrorDesc()+"', " 
 		        	+ " RESFER = CURRENT DATE, RESHOR = CURRENT TIME, RESFAC = '"+aBean.getResfac()+"' "
