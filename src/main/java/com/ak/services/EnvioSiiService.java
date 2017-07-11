@@ -185,6 +185,7 @@ public class EnvioSiiService {
 			if(aResults.size() != aKeys.size()){ LOGGER.log(Level.SEVERE, "No se han recibidos respuestas de todas las facturas enviadas !!!"); throw new Exception(); }
 			TrasiiBean aBean = null;
 			ResultFactura aResultF = null;
+			String tmpActualizarCSV = "";
 			
 //	        // TODO: Provisional
 //	        trasiiRepository.fixForTrasiiFacnumWithBlanks();
@@ -204,7 +205,7 @@ public class EnvioSiiService {
 					EntityManagerFactory factory2 = entityManager.getEntityManagerFactory();
 		            EntityManager em3 = factory2.createEntityManager();
 		            em3.getTransaction().begin();
-		            String tmpActualizarCSV = " RESCSV = '" + aResultF.getCsv() + "', ";
+		            tmpActualizarCSV = " RESCSV = '" + aResultF.getCsv() + "', ";
 		            if(aResultF.getEstadoRegistro().toUpperCase().startsWith("IN")){
 						tmpActualizarCSV = "";
 		            }
