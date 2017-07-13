@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,6 +92,9 @@ public class TrasiiService {
             aSqlUpdate.executeUpdate();
             em3.getTransaction().commit();
             
+            em3.close();
+//            factory2.close();
+   
 //            repository.save(inBean);
             if(tmpCompany == null){
             	tmpCompany = inKey.getCompaak();
@@ -118,6 +120,10 @@ public class TrasiiService {
         javax.persistence.Query aSqlInsert = em2.createNativeQuery("INSERT INTO CTLSII (COMPAAK, EMPRESA, CTLPRO, CTLRUT, CTLUSE, CTLFCR, CTLHCR) VALUES ('"+tmpCompany+"', '"+tmpEmpresa+"', '"+aNumPro+"', '', 'WEB', CURRENT DATE, CURRENT TIME)");
         aSqlInsert.executeUpdate();
         em2.getTransaction().commit();
+        
+        em2.close();
+//        factory.close();
+        
         int intents = -5;
         CtlsiiBean aBeanData = null;
         javax.persistence.Query aSql = entityManager.createNativeQuery("SELECT CTLUSE FROM CTLSII WHERE COMPAAK='"+tmpCompany+"' AND EMPRESA='"+tmpEmpresa+"' AND CTLPRO='"+aNumPro+"'");

@@ -199,7 +199,7 @@ public class EnvioSiiService {
 					aBean.setResdes(aResultF.getErrorDesc());
 					aBean.setResfer(new java.sql.Date(new Date().getTime()));
 					aBean.setReshor(new java.sql.Time(new Date().getTime()));
-
+					
 					aBean.setResfac(aResultF.getEstadoRegistro().substring(0,Math.min(aResultF.getEstadoRegistro().length(), 5)));
 //					trasiiRepository.save(aBean);
 					EntityManagerFactory factory2 = entityManager.getEntityManagerFactory();
@@ -224,6 +224,10 @@ public class EnvioSiiService {
 		            javax.persistence.Query aSqlUpdate = em3.createNativeQuery(tmpSaveInSQL);
 		            aSqlUpdate.executeUpdate();
 		            em3.getTransaction().commit();
+		            
+		            em3.close();
+//		            factory2.close();
+		            
 				}else{
 					LOGGER.log(Level.SEVERE, "Registro del TRASII imposible de recuperar, por lo tanto el resultado no se puede guardar " + aResultF);
 				}
